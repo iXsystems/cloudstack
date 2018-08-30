@@ -83,6 +83,7 @@
         <module>hypervisors/ovm</module>
         <module>hypervisors/ucs</module>
         <module>hypervisors/xenserver</module>
+        <module>hypervisors/bhyve</module>
 
         <module>integrations/cloudian</module>
         <module>integrations/prometheus</module>
