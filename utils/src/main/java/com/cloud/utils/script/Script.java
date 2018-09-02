@@ -487,9 +487,18 @@ public class Script implements Callable<String> {
         return Script.runSimpleBashScript(command, 0);
     }
 
+    public static String runSimpleShScript(String command) {
+        return runSimpleShellScript(command, 0, "/bin/sh");
+    }
+
     public static String runSimpleBashScript(String command, int timeout) {
 
-        Script s = new Script("/bin/bash", timeout);
+        return runSimpleShellScript(command, timeout, "/bin/bash");
+    }
+
+    public static String runSimpleShellScript(String command, int timeout, String pathShell) {
+
+        Script s = new Script(pathShell, timeout);
         s.add("-c");
         s.add(command);
 
@@ -503,6 +512,7 @@ public class Script implements Callable<String> {
         else
             return result.trim();
     }
+
 
     public static int runSimpleBashScriptForExitValue(String command) {
         return runSimpleBashScriptForExitValue(command, 0);
@@ -525,5 +535,7 @@ public class Script implements Callable<String> {
             }
         }
     }
+
+
 
 }
