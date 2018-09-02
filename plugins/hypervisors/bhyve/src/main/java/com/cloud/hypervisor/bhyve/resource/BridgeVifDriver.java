@@ -89,22 +89,6 @@ public class BridgeVifDriver extends VifDriverBase {
 
 
     private void getPifsFreeBSD(){
-
-    }
-
-    private List<String> getBridgesFreeBSD(){
-        // ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge
-        final List<String> bridges = new ArrayList<String>();
-        String listOfInterfaces = Script.runSimpleShScript("ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge");
-        String [] bridgesTmp = listOfInterfaces.split("\n");
-        for (int i = 0 ; i<bridgesTmp.length; i++){
-            bridges.add(bridgesTmp[i]);
-        }
-        return bridges;
-
-    }
-
-    public void getPifs() {
         final List<String> bridges = getBridgesFreeBSD();
 
         String guestBridgeName = _libvirtComputingResource.getGuestBridgeName();
@@ -146,8 +130,22 @@ public class BridgeVifDriver extends VifDriverBase {
 
         s_logger.debug("done looking for pifs, no more bridges");
 
+    }
 
+    private List<String> getBridgesFreeBSD(){
+        // ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge
+        final List<String> bridges = new ArrayList<String>();
+        String listOfInterfaces = Script.runSimpleShScript("ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge", true);
+        String [] bridgesTmp = listOfInterfaces.split("\n");
+        for (int i = 0 ; i<bridgesTmp.length; i++){
+            bridges.add(bridgesTmp[i]);
+        }
+        return bridges;
 
+    }
+
+    public void getPifs() {
+        getPifsFreeBSD();
     }
 
     public void getPifsLinux() {
