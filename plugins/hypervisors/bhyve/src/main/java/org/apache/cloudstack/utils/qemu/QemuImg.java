@@ -32,7 +32,7 @@ public class QemuImg {
     public String _qemuImgPath = "qemu-img";
     private int timeout;
 
-    /* Shouldn't we have KVMPhysicalDisk and LibvirtVMDef read this? */
+    /* Shouldn't we have BhyvePhysicalDisk and LibvirtVMDef read this? */
     public static enum PhysicalDiskFormat {
         RAW("raw"), QCOW2("qcow2"), VMDK("vmdk"), FILE("file"), RBD("rbd"), SHEEPDOG("sheepdog"), HTTP("http"), HTTPS("https"), TAR("tar"), DIR("dir");
         String format;
@@ -226,7 +226,7 @@ public class QemuImg {
     public void convert(final QemuImgFile srcFile, final QemuImgFile destFile, final Map<String, String> options) throws QemuImgException {
         final Script script = new Script(_qemuImgPath, timeout);
         script.add("convert");
-        // autodetect source format. Sometime int he future we may teach KVMPhysicalDisk about more formats, then we can explicitly pass them if necessary
+        // autodetect source format. Sometime int he future we may teach BhyvePhysicalDisk about more formats, then we can explicitly pass them if necessary
         //s.add("-f");
         //s.add(srcFile.getFormat().toString());
         script.add("-O");

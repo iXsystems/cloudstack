@@ -125,7 +125,7 @@ public class KVMStoragePoolManager {
 
     public boolean connectPhysicalDisk(StoragePoolType type, String poolUuid, String volPath, Map<String, String> details) {
         StorageAdaptor adaptor = getStorageAdaptor(type);
-        KVMStoragePool pool = adaptor.getStoragePool(poolUuid);
+        BhyveStoragePool pool = adaptor.getStoragePool(poolUuid);
 
         return adaptor.connectPhysicalDisk(volPath, pool, details);
     }
@@ -141,7 +141,7 @@ public class KVMStoragePoolManager {
             if (disk.getType() != Volume.Type.ISO) {
                 VolumeObjectTO vol = (VolumeObjectTO)disk.getData();
                 PrimaryDataStoreTO store = (PrimaryDataStoreTO)vol.getDataStore();
-                KVMStoragePool pool = getStoragePool(store.getPoolType(), store.getUuid());
+                BhyveStoragePool pool = getStoragePool(store.getPoolType(), store.getUuid());
 
                 StorageAdaptor adaptor = getStorageAdaptor(pool.getType());
 
@@ -207,7 +207,7 @@ public class KVMStoragePoolManager {
                 VolumeObjectTO vol = (VolumeObjectTO)disk.getData();
                 PrimaryDataStoreTO store = (PrimaryDataStoreTO)vol.getDataStore();
 
-                KVMStoragePool pool = getStoragePool(store.getPoolType(), store.getUuid());
+                BhyveStoragePool pool = getStoragePool(store.getPoolType(), store.getUuid());
 
                 if (pool == null) {
                     s_logger.error("Pool " + store.getUuid() + " of type " + store.getPoolType() + " was not found, skipping disconnect logic");
@@ -231,14 +231,14 @@ public class KVMStoragePoolManager {
         return result;
     }
 
-    public KVMStoragePool getStoragePool(StoragePoolType type, String uuid) {
+    public BhyveStoragePool getStoragePool(StoragePoolType type, String uuid) {
         return this.getStoragePool(type, uuid, false);
     }
 
-    public KVMStoragePool getStoragePool(StoragePoolType type, String uuid, boolean refreshInfo) {
+    public BhyveStoragePool getStoragePool(StoragePoolType type, String uuid, boolean refreshInfo) {
 
         StorageAdaptor adaptor = getStorageAdaptor(type);
-        KVMStoragePool pool = null;
+        BhyveStoragePool pool = null;
         try {
             pool = adaptor.getStoragePool(uuid, refreshInfo);
         } catch (Exception e) {
@@ -252,7 +252,7 @@ public class KVMStoragePoolManager {
         return pool;
     }
 
-    public KVMStoragePool getStoragePoolByURI(String uri) {
+    public BhyveStoragePool getStoragePoolByURI(String uri) {
         URI storageUri = null;
 
         try {
@@ -277,15 +277,15 @@ public class KVMStoragePoolManager {
         return createStoragePool(uuid, sourceHost, 0, sourcePath, "", protocol, false);
     }
 
-    public KVMPhysicalDisk getPhysicalDisk(StoragePoolType type, String poolUuid, String volName) {
+    public BhyvePhysicalDisk getPhysicalDisk(StoragePoolType type, String poolUuid, String volName) {
         int cnt = 0;
         int retries = 10;
-        KVMPhysicalDisk vol = null;
+        BhyvePhysicalDisk vol = null;
         //harden get volume, try cnt times to get volume, in case volume is created on other host
         String errMsg = "";
         while (cnt < retries) {
             try {
-                KVMStoragePool pool = getStoragePool(type, poolUuid);
+                BhyveStoragePool pool = getStoragePool(type, poolUuid);
                 vol = pool.getPhysicalDisk(volName);
                 if (vol != null) {
                     break;
@@ -311,15 +311,15 @@ public class KVMStoragePoolManager {
 
     }
 
-    public KVMStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type) {
+    public BhyveStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type) {
         // primary storage registers itself through here
         return createStoragePool(name, host, port, path, userInfo, type, true);
     }
 
     //Note: due to bug CLOUDSTACK-4459, createStoragepool can be called in parallel, so need to be synced.
-    private synchronized KVMStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type, boolean primaryStorage) {
+    private synchronized BhyveStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type, boolean primaryStorage) {
         StorageAdaptor adaptor = getStorageAdaptor(type);
-        KVMStoragePool pool = adaptor.createStoragePool(name, host, port, path, userInfo, type);
+        BhyveStoragePool pool = adaptor.createStoragePool(name, host, port, path, userInfo, type);
 
         // LibvirtStorageAdaptor-specific statement
         if (type == StoragePoolType.NetworkFilesystem && primaryStorage) {
@@ -333,7 +333,7 @@ public class KVMStoragePoolManager {
 
     public boolean disconnectPhysicalDisk(StoragePoolType type, String poolUuid, String volPath) {
         StorageAdaptor adaptor = getStorageAdaptor(type);
-        KVMStoragePool pool = adaptor.getStoragePool(poolUuid);
+        BhyveStoragePool pool = adaptor.getStoragePool(poolUuid);
 
         return adaptor.disconnectPhysicalDisk(volPath, pool);
     }
@@ -348,13 +348,13 @@ public class KVMStoragePoolManager {
         return true;
     }
 
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template, String name, Storage.ProvisioningType provisioningType,
-                                                    KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template, String name, Storage.ProvisioningType provisioningType,
+                                                    BhyveStoragePool destPool, int timeout) {
         return createDiskFromTemplate(template, name, provisioningType, destPool, template.getSize(), timeout);
     }
 
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template, String name, Storage.ProvisioningType provisioningType,
-                                                    KVMStoragePool destPool, long size, int timeout) {
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template, String name, Storage.ProvisioningType provisioningType,
+                                                    BhyveStoragePool destPool, long size, int timeout) {
         StorageAdaptor adaptor = getStorageAdaptor(destPool.getType());
 
         // LibvirtStorageAdaptor-specific statement
@@ -377,17 +377,17 @@ public class KVMStoragePoolManager {
         }
     }
 
-    public KVMPhysicalDisk createTemplateFromDisk(KVMPhysicalDisk disk, String name, PhysicalDiskFormat format, long size, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createTemplateFromDisk(BhyvePhysicalDisk disk, String name, PhysicalDiskFormat format, long size, BhyveStoragePool destPool) {
         StorageAdaptor adaptor = getStorageAdaptor(destPool.getType());
         return adaptor.createTemplateFromDisk(disk, name, format, size, destPool);
     }
 
-    public KVMPhysicalDisk copyPhysicalDisk(KVMPhysicalDisk disk, String name, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk copyPhysicalDisk(BhyvePhysicalDisk disk, String name, BhyveStoragePool destPool, int timeout) {
         StorageAdaptor adaptor = getStorageAdaptor(destPool.getType());
         return adaptor.copyPhysicalDisk(disk, name, destPool, timeout);
     }
 
-    public KVMPhysicalDisk createDiskFromSnapshot(KVMPhysicalDisk snapshot, String snapshotName, String name, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createDiskFromSnapshot(BhyvePhysicalDisk snapshot, String snapshotName, String name, BhyveStoragePool destPool) {
         StorageAdaptor adaptor = getStorageAdaptor(destPool.getType());
         return adaptor.createDiskFromSnapshot(snapshot, snapshotName, name, destPool);
     }

@@ -29,7 +29,7 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.ModifyTargetsAnswer;
 import com.cloud.agent.api.ModifyTargetsCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.storage.Storage.StoragePoolType;
 import com.cloud.resource.CommandWrapper;
@@ -56,9 +56,9 @@ public final class LibvirtModifyTargetsCommandWrapper extends CommandWrapper<Mod
 
             if (command.getAdd()) {
                 if (storagePoolMgr.connectPhysicalDisk(storagePoolType, storageUuid, path, target)) {
-                    KVMPhysicalDisk kvmPhysicalDisk = storagePoolMgr.getPhysicalDisk(storagePoolType, storageUuid, path);
+                    BhyvePhysicalDisk bhyvePhysicalDisk = storagePoolMgr.getPhysicalDisk(storagePoolType, storageUuid, path);
 
-                    connectedPaths.add(kvmPhysicalDisk.getPath());
+                    connectedPaths.add(bhyvePhysicalDisk.getPath());
                 }
                 else {
                     throw new CloudRuntimeException("Unable to connect to the following target: " + path);

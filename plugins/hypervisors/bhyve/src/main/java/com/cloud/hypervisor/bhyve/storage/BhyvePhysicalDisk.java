@@ -18,10 +18,10 @@ package com.cloud.hypervisor.bhyve.storage;
 
 import org.apache.cloudstack.utils.qemu.QemuImg.PhysicalDiskFormat;
 
-public class KVMPhysicalDisk {
+public class BhyvePhysicalDisk {
     private String path;
     private String name;
-    private KVMStoragePool pool;
+    private BhyveStoragePool pool;
 
     public static String RBDStringBuilder(String monHost, int monPort, String authUserName, String authSecret, String image) {
         String rbdOpts;
@@ -50,7 +50,7 @@ public class KVMPhysicalDisk {
     private long size;
     private long virtualSize;
 
-    public KVMPhysicalDisk(String path, String name, KVMStoragePool pool) {
+    public BhyvePhysicalDisk(String path, String name, BhyveStoragePool pool) {
         this.path = path;
         this.name = name;
         this.pool = pool;
@@ -58,7 +58,7 @@ public class KVMPhysicalDisk {
 
     @Override
     public String toString() {
-        return "KVMPhysicalDisk [path=" + path + ", name=" + name + ", pool=" + pool + ", format=" + format + ", size=" + size + ", virtualSize=" + virtualSize + "]";
+        return "BhyvePhysicalDisk [path=" + path + ", name=" + name + ", pool=" + pool + ", format=" + format + ", size=" + size + ", virtualSize=" + virtualSize + "]";
     }
 
     public void setFormat(PhysicalDiskFormat format) {
@@ -93,7 +93,7 @@ public class KVMPhysicalDisk {
         return this.path;
     }
 
-    public KVMStoragePool getPool() {
+    public BhyveStoragePool getPool() {
         return this.pool;
     }
 

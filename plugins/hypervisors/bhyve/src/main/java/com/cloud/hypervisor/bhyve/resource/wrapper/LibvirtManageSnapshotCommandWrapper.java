@@ -22,6 +22,8 @@ package com.cloud.hypervisor.bhyve.resource.wrapper;
 import java.io.File;
 import java.text.MessageFormat;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.log4j.Logger;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
@@ -38,8 +40,6 @@ import com.cloud.agent.api.ManageSnapshotAnswer;
 import com.cloud.agent.api.ManageSnapshotCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -72,9 +72,9 @@ public final class LibvirtManageSnapshotCommandWrapper extends CommandWrapper<Ma
 
             final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             final StorageFilerTO pool = command.getPool();
-            final KVMStoragePool primaryPool = storagePoolMgr.getStoragePool(pool.getType(), pool.getUuid());
+            final BhyveStoragePool primaryPool = storagePoolMgr.getStoragePool(pool.getType(), pool.getUuid());
 
-            final KVMPhysicalDisk disk = primaryPool.getPhysicalDisk(command.getVolumePath());
+            final BhyvePhysicalDisk disk = primaryPool.getPhysicalDisk(command.getVolumePath());
             if (state == DomainState.VIR_DOMAIN_RUNNING && !primaryPool.isExternalSnapshot()) {
 
                 final MessageFormat snapshotXML = new MessageFormat("   <domainsnapshot>" + "       <name>{0}</name>" + "          <domain>"

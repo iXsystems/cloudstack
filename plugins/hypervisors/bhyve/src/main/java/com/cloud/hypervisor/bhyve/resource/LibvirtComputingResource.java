@@ -47,6 +47,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import com.cloud.resource.RequestWrapper;
 import org.apache.cloudstack.storage.to.PrimaryDataStoreTO;
 import org.apache.cloudstack.storage.to.VolumeObjectTO;
@@ -138,8 +140,6 @@ import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.WatchDogDef.WatchDogActi
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.WatchDogDef.WatchDogModel;
 import com.cloud.hypervisor.bhyve.resource.wrapper.LibvirtRequestWrapper;
 import com.cloud.hypervisor.bhyve.resource.wrapper.LibvirtUtilitiesHelper;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.hypervisor.bhyve.storage.KVMStorageProcessor;
 import com.cloud.network.Networks.BroadcastDomainType;
@@ -1529,7 +1529,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     }
 
     // this is much like PrimaryStorageDownloadCommand, but keeping it separate
-    public KVMPhysicalDisk templateToPrimaryDownload(final String templateUrl, final KVMStoragePool primaryPool, final String volUuid) {
+    public BhyvePhysicalDisk templateToPrimaryDownload(final String templateUrl, final BhyveStoragePool primaryPool, final String volUuid) {
         final int index = templateUrl.lastIndexOf("/");
         final String mountpoint = templateUrl.substring(0, index);
         String templateName = null;
@@ -1537,19 +1537,19 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             templateName = templateUrl.substring(index + 1);
         }
 
-        KVMPhysicalDisk templateVol = null;
-        KVMStoragePool secondaryPool = null;
+        BhyvePhysicalDisk templateVol = null;
+        BhyveStoragePool secondaryPool = null;
         try {
             secondaryPool = _storagePoolMgr.getStoragePoolByURI(mountpoint);
             /* Get template vol */
             if (templateName == null) {
                 secondaryPool.refresh();
-                final List<KVMPhysicalDisk> disks = secondaryPool.listPhysicalDisks();
+                final List<BhyvePhysicalDisk> disks = secondaryPool.listPhysicalDisks();
                 if (disks == null || disks.isEmpty()) {
                     s_logger.error("Failed to get volumes from pool: " + secondaryPool.getUuid());
                     return null;
                 }
-                for (final KVMPhysicalDisk disk : disks) {
+                for (final BhyvePhysicalDisk disk : disks) {
                     if (disk.getName().endsWith("qcow2")) {
                         templateVol = disk;
                         break;
@@ -1565,7 +1565,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
             /* Copy volume to primary storage */
 
-            final KVMPhysicalDisk primaryVol = _storagePoolMgr.copyPhysicalDisk(templateVol, volUuid, primaryPool, 0);
+            final BhyvePhysicalDisk primaryVol = _storagePoolMgr.copyPhysicalDisk(templateVol, volUuid, primaryPool, 0);
             return primaryVol;
         } catch (final CloudRuntimeException e) {
             s_logger.error("Failed to download template to primary storage", e);
@@ -1577,7 +1577,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         }
     }
 
-    public String getResizeScriptType(final KVMStoragePool pool, final KVMPhysicalDisk vol) {
+    public String getResizeScriptType(final BhyveStoragePool pool, final BhyvePhysicalDisk vol) {
         final StoragePoolType poolType = pool.getType();
         final PhysicalDiskFormat volFormat = vol.getFormat();
 
@@ -2210,8 +2210,8 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             final int index = isoPath.lastIndexOf("/");
             final String path = isoPath.substring(0, index);
             final String name = isoPath.substring(index + 1);
-            final KVMStoragePool secondaryPool = _storagePoolMgr.getStoragePoolByURI(path);
-            final KVMPhysicalDisk isoVol = secondaryPool.getPhysicalDisk(name);
+            final BhyveStoragePool secondaryPool = _storagePoolMgr.getStoragePoolByURI(path);
+            final BhyvePhysicalDisk isoVol = secondaryPool.getPhysicalDisk(name);
             return isoVol.getPath();
         } else {
             return data.getPath();
@@ -2228,8 +2228,8 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         });
 
         for (final DiskTO volume : disks) {
-            KVMPhysicalDisk physicalDisk = null;
-            KVMStoragePool pool = null;
+            BhyvePhysicalDisk physicalDisk = null;
+            BhyveStoragePool pool = null;
             final DataTO data = volume.getData();
             if (volume.getType() == Volume.Type.ISO && data.getPath() != null) {
                 DataStoreTO dataStore = data.getDataStore();
@@ -2247,7 +2247,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                 final int index = volPath.lastIndexOf("/");
                 final String volDir = volPath.substring(0, index);
                 final String volName = volPath.substring(index + 1);
-                final KVMStoragePool secondaryStorage = _storagePoolMgr.getStoragePoolByURI(volDir);
+                final BhyveStoragePool secondaryStorage = _storagePoolMgr.getStoragePoolByURI(volDir);
                 physicalDisk = secondaryStorage.getPhysicalDisk(volName);
             } else if (volume.getType() != Volume.Type.ISO) {
                 final PrimaryDataStoreTO store = (PrimaryDataStoreTO)data.getDataStore();
@@ -2364,12 +2364,12 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                 final DataTO data = volume.getData();
                 final PrimaryDataStoreTO store = (PrimaryDataStoreTO)data.getDataStore();
                 if (volume.getType() == Volume.Type.ROOT) {
-                    final KVMPhysicalDisk physicalDisk = _storagePoolMgr.getPhysicalDisk(store.getPoolType(), store.getUuid(), data.getPath());
+                    final BhyvePhysicalDisk physicalDisk = _storagePoolMgr.getPhysicalDisk(store.getPoolType(), store.getUuid(), data.getPath());
                     final FilesystemDef rootFs = new FilesystemDef(physicalDisk.getPath(), "/");
                     vm.getDevices().addDevice(rootFs);
                 } else if (volume.getType() == Volume.Type.DATADISK) {
-                    final KVMPhysicalDisk physicalDisk = _storagePoolMgr.getPhysicalDisk(store.getPoolType(), store.getUuid(), data.getPath());
-                    final KVMStoragePool pool = physicalDisk.getPool();
+                    final BhyvePhysicalDisk physicalDisk = _storagePoolMgr.getPhysicalDisk(store.getPoolType(), store.getUuid(), data.getPath());
+                    final BhyveStoragePool pool = physicalDisk.getPool();
                     if(StoragePoolType.RBD.equals(pool.getType())) {
                         final int devId = volume.getDiskSeq().intValue();
                         final String device = mapRbdDevice(physicalDisk);
@@ -2438,8 +2438,8 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             final int index = isoPath.lastIndexOf("/");
             final String path = isoPath.substring(0, index);
             final String name = isoPath.substring(index + 1);
-            final KVMStoragePool secondaryPool = _storagePoolMgr.getStoragePoolByURI(path);
-            final KVMPhysicalDisk isoVol = secondaryPool.getPhysicalDisk(name);
+            final BhyveStoragePool secondaryPool = _storagePoolMgr.getStoragePoolByURI(path);
+            final BhyvePhysicalDisk isoVol = secondaryPool.getPhysicalDisk(name);
             isoPath = isoVol.getPath();
 
             iso.defISODisk(isoPath, diskSeq);
@@ -2462,12 +2462,12 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     }
 
     public synchronized String attachOrDetachDisk(final Connect conn,
-            final boolean attach, final String vmName, final KVMPhysicalDisk attachingDisk,
+            final boolean attach, final String vmName, final BhyvePhysicalDisk attachingDisk,
             final int devId, final Long bytesReadRate, final Long bytesWriteRate, final Long iopsReadRate, final Long iopsWriteRate, final String cacheMode) throws LibvirtException, InternalErrorException {
         List<DiskDef> disks = null;
         Domain dm = null;
         DiskDef diskdef = null;
-        final KVMStoragePool attachingPool = attachingDisk.getPool();
+        final BhyveStoragePool attachingPool = attachingDisk.getPool();
         try {
             dm = conn.domainLookupByName(vmName);
             final LibvirtDomainXMLParser parser = new LibvirtDomainXMLParser();
@@ -2623,7 +2623,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         StartupStorageCommand sscmd = null;
         try {
 
-            final KVMStoragePool localStoragePool = _storagePoolMgr.createStoragePool(_localStorageUUID, "localhost", -1, _localStoragePath, "", StoragePoolType.Filesystem);
+            final BhyveStoragePool localStoragePool = _storagePoolMgr.createStoragePool(_localStorageUUID, "localhost", -1, _localStoragePath, "", StoragePoolType.Filesystem);
             final com.cloud.agent.api.StoragePoolInfo pi =
                     new com.cloud.agent.api.StoragePoolInfo(localStoragePool.getUuid(), cmd.getPrivateIpAddress(), _localStoragePath, _localStoragePath,
                             StoragePoolType.Filesystem, localStoragePool.getCapacity(), localStoragePool.getAvailable());
@@ -3704,8 +3704,8 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         return _hypervisorType;
     }
 
-    public String mapRbdDevice(final KVMPhysicalDisk disk){
-        final KVMStoragePool pool = disk.getPool();
+    public String mapRbdDevice(final BhyvePhysicalDisk disk){
+        final BhyveStoragePool pool = disk.getPool();
         //Check if rbd image is already mapped
         final String[] splitPoolImage = disk.getPath().split("/");
         String device = Script.runSimpleBashScript("rbd showmapped | grep \""+splitPoolImage[0]+"[ ]*"+splitPoolImage[1]+"\" | grep -o \"[^ ]*[ ]*$\"");

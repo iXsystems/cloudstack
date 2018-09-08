@@ -31,8 +31,8 @@ import com.cloud.agent.api.CreatePrivateTemplateFromSnapshotCommand;
 import com.cloud.agent.api.storage.CreatePrivateTemplateAnswer;
 import com.cloud.exception.InternalErrorException;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -57,8 +57,8 @@ public final class LibvirtCreatePrivateTemplateFromSnapshotCommandWrapper extend
         final String tmplName = libvirtUtilitiesHelper.generateUUIDName();
         final String tmplFileName = tmplName + ".qcow2";
 
-        KVMStoragePool secondaryPool = null;
-        KVMStoragePool snapshotPool = null;
+        BhyveStoragePool secondaryPool = null;
+        BhyveStoragePool snapshotPool = null;
         final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
 
         try {
@@ -69,7 +69,7 @@ public final class LibvirtCreatePrivateTemplateFromSnapshotCommandWrapper extend
             snapshotPool = storagePoolMgr.getStoragePoolByURI(command.getSecondaryStorageUrl() + snapshotPath);
             secondaryPool = storagePoolMgr.getStoragePoolByURI(command.getSecondaryStorageUrl());
 
-            final KVMPhysicalDisk snapshot = snapshotPool.getPhysicalDisk(command.getSnapshotName());
+            final BhyvePhysicalDisk snapshot = snapshotPool.getPhysicalDisk(command.getSnapshotName());
 
             final String templatePath = secondaryPool.getLocalPath() + File.separator + templateInstallFolder;
 

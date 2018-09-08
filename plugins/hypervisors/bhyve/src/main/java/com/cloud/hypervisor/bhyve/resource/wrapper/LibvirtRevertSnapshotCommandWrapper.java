@@ -21,6 +21,8 @@ package com.cloud.hypervisor.bhyve.resource.wrapper;
 
 import java.io.File;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.cloudstack.storage.command.RevertSnapshotCommand;
 import org.apache.cloudstack.storage.to.PrimaryDataStoreTO;
 import org.apache.cloudstack.storage.to.SnapshotObjectTO;
@@ -31,8 +33,6 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.to.DataStoreTO;
 import com.cloud.agent.api.to.NfsTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -61,7 +61,7 @@ public final class LibvirtRevertSnapshotCommandWrapper extends CommandWrapper<Re
         String volumePath = volume.getPath();
         String snapshotPath = null;
         String snapshotRelPath = null;
-        KVMStoragePool secondaryStoragePool = null;
+        BhyveStoragePool secondaryStoragePool = null;
         try {
             final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             secondaryStoragePool = storagePoolMgr.getStoragePoolByURI(secondaryStoragePoolUrl);
@@ -69,9 +69,9 @@ public final class LibvirtRevertSnapshotCommandWrapper extends CommandWrapper<Re
             snapshotRelPath = snapshot.getPath();
             snapshotPath = ssPmountPath + File.separator + snapshotRelPath;
 
-            KVMPhysicalDisk snapshotDisk = storagePoolMgr.getPhysicalDisk(primaryStore.getPoolType(),
+            BhyvePhysicalDisk snapshotDisk = storagePoolMgr.getPhysicalDisk(primaryStore.getPoolType(),
                     primaryStore.getUuid(), volumePath);
-            KVMStoragePool primaryPool = snapshotDisk.getPool();
+            BhyveStoragePool primaryPool = snapshotDisk.getPool();
 
             if (primaryPool.getType() == StoragePoolType.RBD) {
                 return new Answer(command, false, "revert snapshot to RBD is not implemented yet");

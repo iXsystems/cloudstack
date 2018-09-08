@@ -21,6 +21,8 @@ package com.cloud.hypervisor.bhyve.resource.wrapper;
 
 import java.util.HashMap;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.log4j.Logger;
 import org.libvirt.Connect;
 import org.libvirt.LibvirtException;
@@ -28,8 +30,6 @@ import org.libvirt.LibvirtException;
 import com.cloud.agent.api.Answer;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.resource.LibvirtConnection;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage.StoragePoolType;
@@ -59,8 +59,8 @@ public final class LibvirtGetVolumeStatsCommandWrapper extends CommandWrapper<Ge
 
 
     private VolumeStatsEntry getVolumeStat(final LibvirtComputingResource libvirtComputingResource, final Connect conn, final String volumeUuid, final String storeUuid, final StoragePoolType poolType) throws LibvirtException {
-        KVMStoragePool sourceKVMPool = libvirtComputingResource.getStoragePoolMgr().getStoragePool(poolType, storeUuid);
-        KVMPhysicalDisk sourceKVMVolume = sourceKVMPool.getPhysicalDisk(volumeUuid);
+        BhyveStoragePool sourceKVMPool = libvirtComputingResource.getStoragePoolMgr().getStoragePool(poolType, storeUuid);
+        BhyvePhysicalDisk sourceKVMVolume = sourceKVMPool.getPhysicalDisk(volumeUuid);
         return new VolumeStatsEntry(volumeUuid, sourceKVMVolume.getSize(), sourceKVMVolume.getVirtualSize());
     }
 }

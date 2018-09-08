@@ -29,7 +29,7 @@ import com.cloud.storage.Storage;
 import com.cloud.storage.Storage.StoragePoolType;
 import com.cloud.utils.exception.CloudRuntimeException;
 
-public class LibvirtStoragePool implements KVMStoragePool {
+public class LibvirtStoragePool implements BhyveStoragePool {
     private static final Logger s_logger = Logger.getLogger(LibvirtStoragePool.class);
     protected String uuid;
     protected long capacity;
@@ -109,21 +109,21 @@ public class LibvirtStoragePool implements KVMStoragePool {
     }
 
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String name,
-            PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String name,
+                                                PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
         return this._storageAdaptor
                 .createPhysicalDisk(name, this, format, provisioningType, size);
     }
 
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String name, Storage.ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String name, Storage.ProvisioningType provisioningType, long size) {
         return this._storageAdaptor.createPhysicalDisk(name, this,
                 this.getDefaultFormat(), provisioningType, size);
     }
 
     @Override
-    public KVMPhysicalDisk getPhysicalDisk(String volumeUid) {
-        KVMPhysicalDisk disk = null;
+    public BhyvePhysicalDisk getPhysicalDisk(String volumeUid) {
+        BhyvePhysicalDisk disk = null;
         String volumeUuid = volumeUid;
         if ( volumeUid.contains("/") ) {
             String[] tokens = volumeUid.split("/");
@@ -148,7 +148,7 @@ public class LibvirtStoragePool implements KVMStoragePool {
             s_logger.debug("volume: " + volumeUuid + " not exist on storage pool");
             throw new CloudRuntimeException("Can't find volume:" + volumeUuid);
         }
-        disk = new KVMPhysicalDisk(f.getPath(), volumeUuid, this);
+        disk = new BhyvePhysicalDisk(f.getPath(), volumeUuid, this);
         disk.setFormat(PhysicalDiskFormat.QCOW2);
         disk.setSize(f.length());
         disk.setVirtualSize(f.length());
@@ -172,7 +172,7 @@ public class LibvirtStoragePool implements KVMStoragePool {
     }
 
     @Override
-    public List<KVMPhysicalDisk> listPhysicalDisks() {
+    public List<BhyvePhysicalDisk> listPhysicalDisks() {
         return this._storageAdaptor.listPhysicalDisks(this.uuid, this);
     }
 

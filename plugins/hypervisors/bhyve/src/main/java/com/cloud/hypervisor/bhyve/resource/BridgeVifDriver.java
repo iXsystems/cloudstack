@@ -132,6 +132,16 @@ public class BridgeVifDriver extends VifDriverBase {
 
     }
 
+    /**
+     *
+     * @return
+     */
+    private boolean createBridgesFreeBSD(){
+
+        return false;
+    }
+
+
     private List<String> getBridgesFreeBSD(){
         // ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge
         final List<String> bridges = new ArrayList<String>();

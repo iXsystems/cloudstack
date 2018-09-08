@@ -19,6 +19,8 @@
 
 package com.cloud.hypervisor.bhyve.resource.wrapper;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.cloudstack.utils.qemu.QemuImg.PhysicalDiskFormat;
 import org.apache.log4j.Logger;
 import org.libvirt.Connect;
@@ -30,8 +32,6 @@ import com.cloud.agent.api.storage.ResizeVolumeAnswer;
 import com.cloud.agent.api.storage.ResizeVolumeCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -65,9 +65,9 @@ public final class LibvirtResizeVolumeCommandWrapper extends CommandWrapper<Resi
 
         try {
             final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
-            KVMStoragePool pool = storagePoolMgr.getStoragePool(spool.getType(), spool.getUuid());
+            BhyveStoragePool pool = storagePoolMgr.getStoragePool(spool.getType(), spool.getUuid());
 
-            final KVMPhysicalDisk vol = pool.getPhysicalDisk(volid);
+            final BhyvePhysicalDisk vol = pool.getPhysicalDisk(volid);
             final String path = vol.getPath();
             String type = notifyOnlyType;
 

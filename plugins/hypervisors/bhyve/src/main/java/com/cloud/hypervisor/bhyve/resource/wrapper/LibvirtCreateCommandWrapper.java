@@ -19,6 +19,8 @@
 
 package com.cloud.hypervisor.bhyve.resource.wrapper;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.log4j.Logger;
 
 import com.cloud.agent.api.Answer;
@@ -27,8 +29,6 @@ import com.cloud.agent.api.storage.CreateCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.agent.api.to.VolumeTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -45,9 +45,9 @@ public final class LibvirtCreateCommandWrapper extends CommandWrapper<CreateComm
     public Answer execute(final CreateCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final StorageFilerTO pool = command.getPool();
         final DiskProfile dskch = command.getDiskCharacteristics();
-        KVMPhysicalDisk baseVol = null;
-        KVMStoragePool primaryPool = null;
-        KVMPhysicalDisk vol = null;
+        BhyvePhysicalDisk baseVol = null;
+        BhyveStoragePool primaryPool = null;
+        BhyvePhysicalDisk vol = null;
         long disksize;
         try {
             final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();

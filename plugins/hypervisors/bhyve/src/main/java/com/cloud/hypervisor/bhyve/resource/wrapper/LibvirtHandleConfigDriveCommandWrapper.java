@@ -23,13 +23,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.cloudstack.storage.configdrive.ConfigDriveBuilder;
 import org.apache.log4j.Logger;
 
 import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.HandleConfigDriveIsoCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -42,7 +42,7 @@ public final class LibvirtHandleConfigDriveCommandWrapper extends CommandWrapper
     @Override
     public Answer execute(final HandleConfigDriveIsoCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
-        final KVMStoragePool pool = storagePoolMgr.getStoragePool(Storage.StoragePoolType.NetworkFilesystem, command.getDestStore().getUuid());
+        final BhyveStoragePool pool = storagePoolMgr.getStoragePool(Storage.StoragePoolType.NetworkFilesystem, command.getDestStore().getUuid());
         if (pool == null) {
             return new Answer(command, false, "Pool not found, config drive for KVM is only supported for NFS");
         }

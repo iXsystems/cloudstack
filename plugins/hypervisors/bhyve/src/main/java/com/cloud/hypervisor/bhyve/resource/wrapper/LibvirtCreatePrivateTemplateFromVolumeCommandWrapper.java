@@ -30,6 +30,8 @@ import java.util.Map;
 
 import javax.naming.ConfigurationException;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.cloudstack.utils.qemu.QemuImg;
 import org.apache.cloudstack.utils.qemu.QemuImg.PhysicalDiskFormat;
 import org.apache.cloudstack.utils.qemu.QemuImgException;
@@ -41,8 +43,6 @@ import com.cloud.agent.api.CreatePrivateTemplateFromVolumeCommand;
 import com.cloud.agent.api.storage.CreatePrivateTemplateAnswer;
 import com.cloud.exception.InternalErrorException;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -65,8 +65,8 @@ public final class LibvirtCreatePrivateTemplateFromVolumeCommandWrapper extends 
     public Answer execute(final CreatePrivateTemplateFromVolumeCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final String secondaryStorageURL = command.getSecondaryStorageUrl();
 
-        KVMStoragePool secondaryStorage = null;
-        KVMStoragePool primary = null;
+        BhyveStoragePool secondaryStorage = null;
+        BhyveStoragePool primary = null;
         final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         try {
             final String templateFolder = command.getAccountId() + File.separator + command.getTemplateId() + File.separator;
@@ -86,7 +86,7 @@ public final class LibvirtCreatePrivateTemplateFromVolumeCommandWrapper extends 
                 }
             }
 
-            final KVMPhysicalDisk disk = primary.getPhysicalDisk(command.getVolumePath());
+            final BhyvePhysicalDisk disk = primary.getPhysicalDisk(command.getVolumePath());
             final String tmpltPath = secondaryStorage.getLocalPath() + File.separator + templateInstallFolder;
             final StorageLayer storage = libvirtComputingResource.getStorage();
             storage.mkdirs(tmpltPath);
@@ -110,7 +110,7 @@ public final class LibvirtCreatePrivateTemplateFromVolumeCommandWrapper extends 
                 s_logger.debug("Converting RBD disk " + disk.getPath() + " into template " + command.getUniqueName());
 
                 final QemuImgFile srcFile =
-                        new QemuImgFile(KVMPhysicalDisk.RBDStringBuilder(primary.getSourceHost(), primary.getSourcePort(), primary.getAuthUserName(),
+                        new QemuImgFile(BhyvePhysicalDisk.RBDStringBuilder(primary.getSourceHost(), primary.getSourcePort(), primary.getAuthUserName(),
                                 primary.getAuthSecret(), disk.getPath()));
                 srcFile.setFormat(PhysicalDiskFormat.RAW);
 

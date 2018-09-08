@@ -28,8 +28,8 @@ import com.cloud.agent.api.storage.CopyVolumeCommand;
 import com.cloud.agent.api.to.DiskTO;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -66,9 +66,9 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
         final StorageFilerTO pool = command.getPool();
         final String secondaryStorageUrl = command.getSecondaryStorageURL();
 
-        KVMStoragePool secondaryStoragePool = null;
+        BhyveStoragePool secondaryStoragePool = null;
         String volumePath;
-        KVMStoragePool primaryPool;
+        BhyveStoragePool primaryPool;
 
         try {
             try {
@@ -87,7 +87,7 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
 
             if (copyToSecondary) {
                 final String destVolumeName = volumeName + ".qcow2";
-                final KVMPhysicalDisk volume = primaryPool.getPhysicalDisk(command.getVolumePath());
+                final BhyvePhysicalDisk volume = primaryPool.getPhysicalDisk(command.getVolumePath());
                 final String volumeDestPath = "/volumes/" + command.getVolumeId() + File.separator;
 
                 secondaryStoragePool = storagePoolMgr.getStoragePoolByURI(secondaryStorageUrl);
@@ -101,7 +101,7 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
                 volumePath = "/volumes/" + command.getVolumeId() + File.separator;
                 secondaryStoragePool = storagePoolMgr.getStoragePoolByURI(secondaryStorageUrl + volumePath);
 
-                final KVMPhysicalDisk volume = secondaryStoragePool.getPhysicalDisk(command.getVolumePath() + ".qcow2");
+                final BhyvePhysicalDisk volume = secondaryStoragePool.getPhysicalDisk(command.getVolumePath() + ".qcow2");
 
                 storagePoolMgr.copyPhysicalDisk(volume, volumeName, primaryPool, 0);
 
@@ -119,7 +119,7 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
     private Answer handleCopyDataFromVolumeToSecondaryStorageUsingSrcDetails(CopyVolumeCommand command, LibvirtComputingResource libvirtComputingResource) {
         KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         PrimaryDataStoreTO srcPrimaryDataStore = null;
-        KVMStoragePool secondaryStoragePool = null;
+        BhyveStoragePool secondaryStoragePool = null;
 
         Map<String, String> srcDetails = command.getSrcDetails();
 
@@ -150,7 +150,7 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
 
             storagePoolMgr.connectPhysicalDisk(srcPrimaryDataStore.getPoolType(), srcPrimaryDataStore.getUuid(), srcPath, srcDetails);
 
-            KVMPhysicalDisk srcPhysicalDisk = storagePoolMgr.getPhysicalDisk(srcPrimaryDataStore.getPoolType(), srcPrimaryDataStore.getUuid(), srcPath);
+            BhyvePhysicalDisk srcPhysicalDisk = storagePoolMgr.getPhysicalDisk(srcPrimaryDataStore.getPoolType(), srcPrimaryDataStore.getUuid(), srcPath);
 
             storagePoolMgr.copyPhysicalDisk(srcPhysicalDisk, destVolumeName, secondaryStoragePool, command.getWait() * 1000);
 

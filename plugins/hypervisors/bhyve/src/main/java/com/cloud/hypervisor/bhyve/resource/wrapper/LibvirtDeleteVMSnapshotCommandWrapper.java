@@ -19,6 +19,7 @@
 
 package com.cloud.hypervisor.bhyve.resource.wrapper;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import org.apache.cloudstack.storage.to.PrimaryDataStoreTO;
 import org.apache.cloudstack.storage.to.VolumeObjectTO;
 import org.apache.log4j.Logger;
@@ -31,7 +32,6 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.DeleteVMSnapshotAnswer;
 import com.cloud.agent.api.DeleteVMSnapshotCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -75,7 +75,7 @@ public final class LibvirtDeleteVMSnapshotCommandWrapper extends CommandWrapper<
                 }
                 if (rootVolume != null && ImageFormat.QCOW2.equals(rootVolume.getFormat())) {
                     PrimaryDataStoreTO primaryStore = (PrimaryDataStoreTO) rootVolume.getDataStore();
-                    KVMPhysicalDisk rootDisk = storagePoolMgr.getPhysicalDisk(primaryStore.getPoolType(),
+                    BhyvePhysicalDisk rootDisk = storagePoolMgr.getPhysicalDisk(primaryStore.getPoolType(),
                             primaryStore.getUuid(), rootVolume.getPath());
                     String qemu_img_snapshot = Script.runSimpleBashScript("qemu-img snapshot -l " + rootDisk.getPath() + " | tail -n +3 | awk -F ' ' '{print $2}' | grep ^" + cmd.getTarget().getSnapshotName() + "$");
                     if (qemu_img_snapshot == null) {

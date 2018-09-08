@@ -328,12 +328,12 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMStoragePool getStoragePool(String uuid) {
+    public BhyveStoragePool getStoragePool(String uuid) {
         return this.getStoragePool(uuid, false);
     }
 
     @Override
-    public KVMStoragePool getStoragePool(String uuid, boolean refreshInfo) {
+    public BhyveStoragePool getStoragePool(String uuid, boolean refreshInfo) {
         s_logger.info("Trying to fetch storage pool " + uuid + " from libvirt");
         StoragePool storage = null;
         try {
@@ -415,14 +415,14 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk getPhysicalDisk(String volumeUuid, KVMStoragePool pool) {
+    public BhyvePhysicalDisk getPhysicalDisk(String volumeUuid, BhyveStoragePool pool) {
         LibvirtStoragePool libvirtPool = (LibvirtStoragePool)pool;
 
         try {
             StorageVol vol = getVolume(libvirtPool.getPool(), volumeUuid);
-            KVMPhysicalDisk disk;
+            BhyvePhysicalDisk disk;
             LibvirtStorageVolumeDef voldef = getStorageVolumeDef(libvirtPool.getPool().getConnect(), vol);
-            disk = new KVMPhysicalDisk(vol.getPath(), vol.getName(), pool);
+            disk = new BhyvePhysicalDisk(vol.getPath(), vol.getName(), pool);
             disk.setSize(vol.getInfo().allocation);
             disk.setVirtualSize(vol.getInfo().capacity);
 
@@ -457,7 +457,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type) {
+    public BhyveStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type) {
         s_logger.info("Attempting to create storage pool " + name + " (" + type.toString() + ") in libvirt");
 
         StoragePool sp = null;
@@ -636,8 +636,8 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String name, KVMStoragePool pool,
-            PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String name, BhyveStoragePool pool,
+                                                PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
 
         s_logger.info("Attempting to create volume " + name + " (" + pool.getType().toString() + ") in pool "
                 + pool.getUuid() + " with size " + size);
@@ -664,8 +664,8 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
         }
     }
 
-    private KVMPhysicalDisk createPhysicalDiskByLibVirt(String name, KVMStoragePool pool,
-            PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
+    private BhyvePhysicalDisk createPhysicalDiskByLibVirt(String name, BhyveStoragePool pool,
+                                                          PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
         LibvirtStoragePool libvirtPool = (LibvirtStoragePool) pool;
         StoragePool virtPool = libvirtPool.getPool();
         LibvirtStorageVolumeDef.VolumeFormat libvirtformat = LibvirtStorageVolumeDef.VolumeFormat.getFormat(format);
@@ -688,7 +688,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
             throw new CloudRuntimeException(e.toString());
         }
 
-        KVMPhysicalDisk disk = new KVMPhysicalDisk(volPath, volName, pool);
+        BhyvePhysicalDisk disk = new BhyvePhysicalDisk(volPath, volName, pool);
         disk.setFormat(format);
         disk.setSize(volAllocation);
         disk.setVirtualSize(volCapacity);
@@ -696,8 +696,8 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
 
-    private KVMPhysicalDisk createPhysicalDiskByQemuImg(String name, KVMStoragePool pool,
-            PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
+    private BhyvePhysicalDisk createPhysicalDiskByQemuImg(String name, BhyveStoragePool pool,
+                                                          PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
         String volPath = pool.getLocalPath() + "/" + name;
         String volName = name;
         long virtualSize = 0;
@@ -724,7 +724,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
                     " due to a failed executing of qemu-img: " + e.getMessage());
         }
 
-        KVMPhysicalDisk disk = new KVMPhysicalDisk(volPath, volName, pool);
+        BhyvePhysicalDisk disk = new BhyvePhysicalDisk(volPath, volName, pool);
         disk.setFormat(format);
         disk.setSize(actualSize);
         disk.setVirtualSize(virtualSize);
@@ -732,13 +732,13 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean connectPhysicalDisk(String name, KVMStoragePool pool, Map<String, String> details) {
+    public boolean connectPhysicalDisk(String name, BhyveStoragePool pool, Map<String, String> details) {
         // this is for managed storage that needs to prep disks prior to use
         return true;
     }
 
     @Override
-    public boolean disconnectPhysicalDisk(String uuid, KVMStoragePool pool) {
+    public boolean disconnectPhysicalDisk(String uuid, BhyveStoragePool pool) {
         // this is for managed storage that needs to cleanup disks after use
         return true;
     }
@@ -783,7 +783,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean deletePhysicalDisk(String uuid, KVMStoragePool pool, Storage.ImageFormat format) {
+    public boolean deletePhysicalDisk(String uuid, BhyveStoragePool pool, Storage.ImageFormat format) {
 
         s_logger.info("Attempting to remove volume " + uuid + " from pool " + pool.getUuid());
 
@@ -868,13 +868,13 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
      * If it has been created on Primary Storage, it will be copied on the Primary Storage
      */
     @Override
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template,
-            String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template,
+                                                    String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size, BhyveStoragePool destPool, int timeout) {
 
         s_logger.info("Creating volume " + name + " from template " + template.getName() + " in pool " + destPool.getUuid() +
                 " (" + destPool.getType().toString() + ") with size " + size);
 
-        KVMPhysicalDisk disk = null;
+        BhyvePhysicalDisk disk = null;
 
         if (destPool.getType() == StoragePoolType.RBD) {
             disk = createDiskFromTemplateOnRBD(template, name, format, provisioningType, size, destPool, timeout);
@@ -934,23 +934,23 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
         return disk;
     }
 
-    private KVMPhysicalDisk createDiskFromTemplateOnRBD(KVMPhysicalDisk template,
-            String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size, KVMStoragePool destPool, int timeout){
+    private BhyvePhysicalDisk createDiskFromTemplateOnRBD(BhyvePhysicalDisk template,
+                                                          String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size, BhyveStoragePool destPool, int timeout){
 
         /*
             With RBD you can't run qemu-img convert with an existing RBD image as destination
             qemu-img will exit with the error that the destination already exists.
             So for RBD we don't create the image, but let qemu-img do that for us.
 
-            We then create a KVMPhysicalDisk object that we can return
+            We then create a BhyvePhysicalDisk object that we can return
          */
 
-        KVMStoragePool srcPool = template.getPool();
-        KVMPhysicalDisk disk = null;
+        BhyveStoragePool srcPool = template.getPool();
+        BhyvePhysicalDisk disk = null;
         String newUuid = name;
 
         format = PhysicalDiskFormat.RAW;
-        disk = new KVMPhysicalDisk(destPool.getSourceDir() + "/" + newUuid, newUuid, destPool);
+        disk = new BhyvePhysicalDisk(destPool.getSourceDir() + "/" + newUuid, newUuid, destPool);
         disk.setFormat(format);
         if (size > template.getVirtualSize()) {
             disk.setSize(size);
@@ -964,7 +964,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
 
         QemuImg qemu = new QemuImg(timeout);
         QemuImgFile srcFile;
-        QemuImgFile destFile = new QemuImgFile(KVMPhysicalDisk.RBDStringBuilder(destPool.getSourceHost(),
+        QemuImgFile destFile = new QemuImgFile(BhyvePhysicalDisk.RBDStringBuilder(destPool.getSourceHost(),
                 destPool.getSourcePort(),
                 destPool.getAuthUserName(),
                 destPool.getAuthSecret(),
@@ -1115,19 +1115,19 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk createTemplateFromDisk(KVMPhysicalDisk disk, String name, PhysicalDiskFormat format, long size, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createTemplateFromDisk(BhyvePhysicalDisk disk, String name, PhysicalDiskFormat format, long size, BhyveStoragePool destPool) {
         return null;
     }
 
     @Override
-    public List<KVMPhysicalDisk> listPhysicalDisks(String storagePoolUuid, KVMStoragePool pool) {
+    public List<BhyvePhysicalDisk> listPhysicalDisks(String storagePoolUuid, BhyveStoragePool pool) {
         LibvirtStoragePool libvirtPool = (LibvirtStoragePool)pool;
         StoragePool virtPool = libvirtPool.getPool();
-        List<KVMPhysicalDisk> disks = new ArrayList<KVMPhysicalDisk>();
+        List<BhyvePhysicalDisk> disks = new ArrayList<BhyvePhysicalDisk>();
         try {
             String[] vols = virtPool.listVolumes();
             for (String volName : vols) {
-                KVMPhysicalDisk disk = getPhysicalDisk(volName, pool);
+                BhyvePhysicalDisk disk = getPhysicalDisk(volName, pool);
                 disks.add(disk);
             }
             return disks;
@@ -1143,24 +1143,24 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
      * in ManagementServerImpl shows that the destPool is always a Secondary Storage Pool
      */
     @Override
-    public KVMPhysicalDisk copyPhysicalDisk(KVMPhysicalDisk disk, String name, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk copyPhysicalDisk(BhyvePhysicalDisk disk, String name, BhyveStoragePool destPool, int timeout) {
 
         /**
             With RBD you can't run qemu-img convert with an existing RBD image as destination
             qemu-img will exit with the error that the destination already exists.
             So for RBD we don't create the image, but let qemu-img do that for us.
 
-            We then create a KVMPhysicalDisk object that we can return
+            We then create a BhyvePhysicalDisk object that we can return
 
             It is however very unlikely that the destPool will be RBD, since it isn't supported
             for Secondary Storage
          */
 
-        KVMStoragePool srcPool = disk.getPool();
+        BhyveStoragePool srcPool = disk.getPool();
         PhysicalDiskFormat sourceFormat = disk.getFormat();
         String sourcePath = disk.getPath();
 
-        KVMPhysicalDisk newDisk;
+        BhyvePhysicalDisk newDisk;
         s_logger.debug("copyPhysicalDisk: disk size:" + disk.getSize() + ", virtualsize:" + disk.getVirtualSize()+" format:"+disk.getFormat());
         if (destPool.getType() != StoragePoolType.RBD) {
             if (disk.getFormat() == PhysicalDiskFormat.TAR) {
@@ -1169,7 +1169,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
                     newDisk = destPool.createPhysicalDisk(name, Storage.ProvisioningType.THIN, disk.getVirtualSize());
             }
         } else {
-            newDisk = new KVMPhysicalDisk(destPool.getSourceDir() + "/" + name, name, destPool);
+            newDisk = new BhyvePhysicalDisk(destPool.getSourceDir() + "/" + name, name, destPool);
             newDisk.setFormat(PhysicalDiskFormat.RAW);
             newDisk.setSize(disk.getVirtualSize());
             newDisk.setVirtualSize(disk.getSize());
@@ -1229,7 +1229,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
             try {
                 srcFile = new QemuImgFile(sourcePath, sourceFormat);
                 String rbdDestPath = destPool.getSourceDir() + "/" + name;
-                String rbdDestFile = KVMPhysicalDisk.RBDStringBuilder(destPool.getSourceHost(),
+                String rbdDestFile = BhyvePhysicalDisk.RBDStringBuilder(destPool.getSourceHost(),
                         destPool.getSourcePort(),
                         destPool.getAuthUserName(),
                         destPool.getAuthSecret(),
@@ -1275,7 +1275,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
                 it doesn't benefit us. It's better to keep the current code in place which works
              */
             srcFile =
-                    new QemuImgFile(KVMPhysicalDisk.RBDStringBuilder(srcPool.getSourceHost(), srcPool.getSourcePort(), srcPool.getAuthUserName(), srcPool.getAuthSecret(),
+                    new QemuImgFile(BhyvePhysicalDisk.RBDStringBuilder(srcPool.getSourceHost(), srcPool.getSourcePort(), srcPool.getAuthUserName(), srcPool.getAuthSecret(),
                             sourcePath));
             srcFile.setFormat(sourceFormat);
             destFile = new QemuImgFile(destPath);
@@ -1297,12 +1297,12 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk createDiskFromSnapshot(KVMPhysicalDisk snapshot, String snapshotName, String name, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createDiskFromSnapshot(BhyvePhysicalDisk snapshot, String snapshotName, String name, BhyveStoragePool destPool) {
         return null;
     }
 
     @Override
-    public boolean refresh(KVMStoragePool pool) {
+    public boolean refresh(BhyveStoragePool pool) {
         LibvirtStoragePool libvirtPool = (LibvirtStoragePool)pool;
         StoragePool virtPool = libvirtPool.getPool();
         try {
@@ -1314,7 +1314,7 @@ public class LibvirtStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean deleteStoragePool(KVMStoragePool pool) {
+    public boolean deleteStoragePool(BhyveStoragePool pool) {
         return deleteStoragePool(pool.getUuid());
     }
 

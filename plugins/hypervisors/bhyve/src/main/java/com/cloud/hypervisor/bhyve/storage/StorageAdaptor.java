@@ -26,27 +26,27 @@ import com.cloud.storage.Storage.StoragePoolType;
 
 public interface StorageAdaptor {
 
-    public KVMStoragePool getStoragePool(String uuid);
+    public BhyveStoragePool getStoragePool(String uuid);
 
     // Get the storage pool from libvirt, but control if libvirt should refresh the pool (can take a long time)
-    public KVMStoragePool getStoragePool(String uuid, boolean refreshInfo);
+    public BhyveStoragePool getStoragePool(String uuid, boolean refreshInfo);
 
-    // given disk path (per database) and pool, create new KVMPhysicalDisk, populate
+    // given disk path (per database) and pool, create new BhyvePhysicalDisk, populate
     // it with info from local disk, and return it
-    public KVMPhysicalDisk getPhysicalDisk(String volumeUuid, KVMStoragePool pool);
+    public BhyvePhysicalDisk getPhysicalDisk(String volumeUuid, BhyveStoragePool pool);
 
-    public KVMStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type);
+    public BhyveStoragePool createStoragePool(String name, String host, int port, String path, String userInfo, StoragePoolType type);
 
     public boolean deleteStoragePool(String uuid);
 
-    public KVMPhysicalDisk createPhysicalDisk(String name, KVMStoragePool pool,
-            PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size);
+    public BhyvePhysicalDisk createPhysicalDisk(String name, BhyveStoragePool pool,
+                                                PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size);
 
     // given disk path (per database) and pool, prepare disk on host
-    public boolean connectPhysicalDisk(String volumePath, KVMStoragePool pool, Map<String, String> details);
+    public boolean connectPhysicalDisk(String volumePath, BhyveStoragePool pool, Map<String, String> details);
 
     // given disk path (per database) and pool, clean up disk on host
-    public boolean disconnectPhysicalDisk(String volumePath, KVMStoragePool pool);
+    public boolean disconnectPhysicalDisk(String volumePath, BhyveStoragePool pool);
 
     public boolean disconnectPhysicalDisk(Map<String, String> volumeToDisconnect);
 
@@ -54,23 +54,23 @@ public interface StorageAdaptor {
     // handled by your adaptor, return false if not. 2) clean up device, return true
     public boolean disconnectPhysicalDiskByPath(String localPath);
 
-    public boolean deletePhysicalDisk(String uuid, KVMStoragePool pool, Storage.ImageFormat format);
+    public boolean deletePhysicalDisk(String uuid, BhyveStoragePool pool, Storage.ImageFormat format);
 
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template,
-            String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size,
-            KVMStoragePool destPool, int timeout);
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template,
+                                                    String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size,
+                                                    BhyveStoragePool destPool, int timeout);
 
-    public KVMPhysicalDisk createTemplateFromDisk(KVMPhysicalDisk disk, String name, PhysicalDiskFormat format, long size, KVMStoragePool destPool);
+    public BhyvePhysicalDisk createTemplateFromDisk(BhyvePhysicalDisk disk, String name, PhysicalDiskFormat format, long size, BhyveStoragePool destPool);
 
-    public List<KVMPhysicalDisk> listPhysicalDisks(String storagePoolUuid, KVMStoragePool pool);
+    public List<BhyvePhysicalDisk> listPhysicalDisks(String storagePoolUuid, BhyveStoragePool pool);
 
-    public KVMPhysicalDisk copyPhysicalDisk(KVMPhysicalDisk disk, String name, KVMStoragePool destPools, int timeout);
+    public BhyvePhysicalDisk copyPhysicalDisk(BhyvePhysicalDisk disk, String name, BhyveStoragePool destPools, int timeout);
 
-    public KVMPhysicalDisk createDiskFromSnapshot(KVMPhysicalDisk snapshot, String snapshotName, String name, KVMStoragePool destPool);
+    public BhyvePhysicalDisk createDiskFromSnapshot(BhyvePhysicalDisk snapshot, String snapshotName, String name, BhyveStoragePool destPool);
 
-    public boolean refresh(KVMStoragePool pool);
+    public boolean refresh(BhyveStoragePool pool);
 
-    public boolean deleteStoragePool(KVMStoragePool pool);
+    public boolean deleteStoragePool(BhyveStoragePool pool);
 
     public boolean createFolder(String uuid, String path);
 }

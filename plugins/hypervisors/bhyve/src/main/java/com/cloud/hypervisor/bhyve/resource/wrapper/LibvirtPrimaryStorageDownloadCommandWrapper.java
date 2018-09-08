@@ -26,8 +26,8 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.storage.PrimaryStorageDownloadAnswer;
 import com.cloud.agent.api.storage.PrimaryStorageDownloadCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -47,8 +47,8 @@ public final class LibvirtPrimaryStorageDownloadCommandWrapper extends CommandWr
             tmpltname = tmplturl.substring(index + 1);
         }
 
-        KVMPhysicalDisk tmplVol = null;
-        KVMStoragePool secondaryPool = null;
+        BhyvePhysicalDisk tmplVol = null;
+        BhyveStoragePool secondaryPool = null;
         final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         try {
             secondaryPool = storagePoolMgr.getStoragePoolByURI(mountpoint);
@@ -56,11 +56,11 @@ public final class LibvirtPrimaryStorageDownloadCommandWrapper extends CommandWr
             /* Get template vol */
             if (tmpltname == null) {
                 secondaryPool.refresh();
-                final List<KVMPhysicalDisk> disks = secondaryPool.listPhysicalDisks();
+                final List<BhyvePhysicalDisk> disks = secondaryPool.listPhysicalDisks();
                 if (disks == null || disks.isEmpty()) {
                     return new PrimaryStorageDownloadAnswer("Failed to get volumes from pool: " + secondaryPool.getUuid());
                 }
-                for (final KVMPhysicalDisk disk : disks) {
+                for (final BhyvePhysicalDisk disk : disks) {
                     if (disk.getName().endsWith("qcow2")) {
                         tmplVol = disk;
                         break;
@@ -74,9 +74,9 @@ public final class LibvirtPrimaryStorageDownloadCommandWrapper extends CommandWr
             }
 
             /* Copy volume to primary storage */
-            final KVMStoragePool primaryPool = storagePoolMgr.getStoragePool(command.getPool().getType(), command.getPoolUuid());
+            final BhyveStoragePool primaryPool = storagePoolMgr.getStoragePool(command.getPool().getType(), command.getPoolUuid());
 
-            final KVMPhysicalDisk primaryVol = storagePoolMgr.copyPhysicalDisk(tmplVol, UUID.randomUUID().toString(), primaryPool, 0);
+            final BhyvePhysicalDisk primaryVol = storagePoolMgr.copyPhysicalDisk(tmplVol, UUID.randomUUID().toString(), primaryPool, 0);
 
             return new PrimaryStorageDownloadAnswer(primaryVol.getName(), primaryVol.getSize());
         } catch (final CloudRuntimeException e) {

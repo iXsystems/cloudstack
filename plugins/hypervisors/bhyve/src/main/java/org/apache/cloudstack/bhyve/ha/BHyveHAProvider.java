@@ -110,25 +110,25 @@ public final class BHyveHAProvider extends HAAbstractHostProvider implements HAP
         final Long clusterId = host.getClusterId();
         switch (name) {
             case HealthCheckTimeout:
-                return BHyveHAConfig.KvmHAHealthCheckTimeout.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHAHealthCheckTimeout.valueIn(clusterId);
             case ActivityCheckTimeout:
-                return BHyveHAConfig.KvmHAActivityCheckTimeout.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHAActivityCheckTimeout.valueIn(clusterId);
             case MaxActivityCheckInterval:
-                return BHyveHAConfig.KvmHAActivityCheckInterval.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHAActivityCheckInterval.valueIn(clusterId);
             case MaxActivityChecks:
-                return BHyveHAConfig.KvmHAActivityCheckMaxAttempts.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHAActivityCheckMaxAttempts.valueIn(clusterId);
             case ActivityCheckFailureRatio:
-                return BHyveHAConfig.KvmHAActivityCheckFailureThreshold.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHAActivityCheckFailureThreshold.valueIn(clusterId);
             case RecoveryWaitTimeout:
-                return BHyveHAConfig.KvmHARecoverWaitPeriod.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHARecoverWaitPeriod.valueIn(clusterId);
             case RecoveryTimeout:
-                return BHyveHAConfig.KvmHARecoverTimeout.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHARecoverTimeout.valueIn(clusterId);
             case FenceTimeout:
-                return BHyveHAConfig.KvmHAFenceTimeout.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHAFenceTimeout.valueIn(clusterId);
             case MaxRecoveryAttempts:
-                return BHyveHAConfig.KvmHARecoverAttemptThreshold.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHARecoverAttemptThreshold.valueIn(clusterId);
             case MaxDegradedWaitTimeout:
-                return BHyveHAConfig.KvmHADegradedMaxPeriod.valueIn(clusterId);
+                return BHyveHAConfig.BhyveHADegradedMaxPeriod.valueIn(clusterId);
             default:
                 throw new InvalidParameterException("Unknown HAProviderConfig " + name.toString());
         }
@@ -142,16 +142,16 @@ public final class BHyveHAProvider extends HAAbstractHostProvider implements HAP
     @Override
     public ConfigKey<?>[] getConfigKeys() {
         return new ConfigKey<?>[] {
-            BHyveHAConfig.KvmHAHealthCheckTimeout,
-            BHyveHAConfig.KvmHAActivityCheckTimeout,
-            BHyveHAConfig.KvmHARecoverTimeout,
-            BHyveHAConfig.KvmHAFenceTimeout,
-            BHyveHAConfig.KvmHAActivityCheckInterval,
-            BHyveHAConfig.KvmHAActivityCheckMaxAttempts,
-            BHyveHAConfig.KvmHAActivityCheckFailureThreshold,
-            BHyveHAConfig.KvmHADegradedMaxPeriod,
-            BHyveHAConfig.KvmHARecoverWaitPeriod,
-            BHyveHAConfig.KvmHARecoverAttemptThreshold
+            BHyveHAConfig.BhyveHAHealthCheckTimeout,
+            BHyveHAConfig.BhyveHAActivityCheckTimeout,
+            BHyveHAConfig.BhyveHARecoverTimeout,
+            BHyveHAConfig.BhyveHAFenceTimeout,
+            BHyveHAConfig.BhyveHAActivityCheckInterval,
+            BHyveHAConfig.BhyveHAActivityCheckMaxAttempts,
+            BHyveHAConfig.BhyveHAActivityCheckFailureThreshold,
+            BHyveHAConfig.BhyveHADegradedMaxPeriod,
+            BHyveHAConfig.BhyveHARecoverWaitPeriod,
+            BHyveHAConfig.BhyveHARecoverAttemptThreshold
         };
     }
 }

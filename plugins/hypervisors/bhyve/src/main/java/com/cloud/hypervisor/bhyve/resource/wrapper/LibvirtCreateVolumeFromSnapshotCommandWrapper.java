@@ -26,8 +26,8 @@ import com.cloud.agent.api.CreateVolumeFromSnapshotAnswer;
 import com.cloud.agent.api.CreateVolumeFromSnapshotCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -45,16 +45,16 @@ public final class LibvirtCreateVolumeFromSnapshotCommandWrapper extends Command
             snapshotPath = snapshotPath.substring(0, index);
 
             final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
-            final KVMStoragePool secondaryPool = storagePoolMgr.getStoragePoolByURI(command.getSecondaryStorageUrl() + snapshotPath);
-            final KVMPhysicalDisk snapshot = secondaryPool.getPhysicalDisk(command.getSnapshotName());
+            final BhyveStoragePool secondaryPool = storagePoolMgr.getStoragePoolByURI(command.getSecondaryStorageUrl() + snapshotPath);
+            final BhyvePhysicalDisk snapshot = secondaryPool.getPhysicalDisk(command.getSnapshotName());
 
             final String primaryUuid = command.getPrimaryStoragePoolNameLabel();
 
             final StorageFilerTO pool = command.getPool();
-            final KVMStoragePool primaryPool = storagePoolMgr.getStoragePool(pool.getType(), primaryUuid);
+            final BhyveStoragePool primaryPool = storagePoolMgr.getStoragePool(pool.getType(), primaryUuid);
 
             final String volUuid = UUID.randomUUID().toString();
-            final KVMPhysicalDisk disk = storagePoolMgr.copyPhysicalDisk(snapshot, volUuid, primaryPool, 0);
+            final BhyvePhysicalDisk disk = storagePoolMgr.copyPhysicalDisk(snapshot, volUuid, primaryPool, 0);
 
             if (disk == null) {
                 throw new NullPointerException("Disk was not successfully copied to the new storage.");

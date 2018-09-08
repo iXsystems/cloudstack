@@ -25,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import org.apache.log4j.Logger;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
@@ -42,8 +44,6 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.BackupSnapshotAnswer;
 import com.cloud.agent.api.BackupSnapshotCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMPhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePool;
 import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -66,7 +66,7 @@ public final class LibvirtBackupSnapshotCommandWrapper extends CommandWrapper<Ba
         String snapshotDestPath = null;
         String snapshotRelPath = null;
         final String vmName = command.getVmName();
-        KVMStoragePool secondaryStoragePool = null;
+        BhyveStoragePool secondaryStoragePool = null;
         final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
 
         try {
@@ -79,8 +79,8 @@ public final class LibvirtBackupSnapshotCommandWrapper extends CommandWrapper<Ba
             snapshotRelPath = File.separator + "snapshots" + File.separator + dcId + File.separator + accountId + File.separator + volumeId;
 
             snapshotDestPath = ssPmountPath + File.separator + "snapshots" + File.separator + dcId + File.separator + accountId + File.separator + volumeId;
-            final KVMStoragePool primaryPool = storagePoolMgr.getStoragePool(command.getPool().getType(), command.getPrimaryStoragePoolNameLabel());
-            final KVMPhysicalDisk snapshotDisk = primaryPool.getPhysicalDisk(command.getVolumePath());
+            final BhyveStoragePool primaryPool = storagePoolMgr.getStoragePool(command.getPool().getType(), command.getPrimaryStoragePoolNameLabel());
+            final BhyvePhysicalDisk snapshotDisk = primaryPool.getPhysicalDisk(command.getVolumePath());
 
             final String manageSnapshotPath = libvirtComputingResource.manageSnapshotPath();
             final int cmdsTimeout = libvirtComputingResource.getCmdsTimeout();
@@ -160,7 +160,7 @@ public final class LibvirtBackupSnapshotCommandWrapper extends CommandWrapper<Ba
                 }
             }
 
-            final KVMStoragePool primaryStorage = storagePoolMgr.getStoragePool(command.getPool().getType(), command.getPool().getUuid());
+            final BhyveStoragePool primaryStorage = storagePoolMgr.getStoragePool(command.getPool().getType(), command.getPool().getUuid());
 
             if (state == DomainState.VIR_DOMAIN_RUNNING && !primaryStorage.isExternalSnapshot()) {
                 final MessageFormat snapshotXML = new MessageFormat("   <domainsnapshot>" + "       <name>{0}</name>" + "          <domain>"

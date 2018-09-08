@@ -47,14 +47,14 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
     private String _mountPoint = "/mnt";
     private StorageLayer _storageLayer;
 
-    private static final Map<String, KVMStoragePool> MapStorageUuidToStoragePool = new HashMap<String, KVMStoragePool>();
+    private static final Map<String, BhyveStoragePool> MapStorageUuidToStoragePool = new HashMap<String, BhyveStoragePool>();
 
     public ManagedNfsStorageAdaptor(StorageLayer storagelayer) {
         _storageLayer = storagelayer;
     }
 
     @Override
-    public KVMStoragePool createStoragePool(String uuid, String host, int port, String path, String userInfo, StoragePoolType storagePoolType) {
+    public BhyveStoragePool createStoragePool(String uuid, String host, int port, String path, String userInfo, StoragePoolType storagePoolType) {
 
         LibvirtStoragePool storagePool = new LibvirtStoragePool(uuid, path, StoragePoolType.ManagedNFS, this, null);
         storagePool.setSourceHost(host);
@@ -65,12 +65,12 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMStoragePool getStoragePool(String uuid) {
+    public BhyveStoragePool getStoragePool(String uuid) {
         return getStoragePool(uuid, false);
     }
 
     @Override
-    public KVMStoragePool getStoragePool(String uuid, boolean refreshInfo) {
+    public BhyveStoragePool getStoragePool(String uuid, boolean refreshInfo) {
         return MapStorageUuidToStoragePool.get(uuid);
     }
 
@@ -80,11 +80,11 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean deleteStoragePool(KVMStoragePool pool) {
+    public boolean deleteStoragePool(BhyveStoragePool pool) {
         return deleteStoragePool(pool.getUuid());
     }
 
-    public KVMPhysicalDisk createPhysicalDisk(String volumeUuid, KVMStoragePool pool, PhysicalDiskFormat format, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String volumeUuid, BhyveStoragePool pool, PhysicalDiskFormat format, long size) {
         throw new UnsupportedOperationException("Creating a physical disk is not supported.");
     }
 
@@ -92,7 +92,7 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
      * creates a nfs storage pool using libvirt
      */
     @Override
-    public boolean connectPhysicalDisk(String volumeUuid, KVMStoragePool pool, Map<String, String> details) {
+    public boolean connectPhysicalDisk(String volumeUuid, BhyveStoragePool pool, Map<String, String> details) {
 
         StoragePool sp = null;
         Connect conn = null;
@@ -167,7 +167,7 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
      * creates a disk based on the created nfs storage pool using libvirt
      */
     @Override
-    public KVMPhysicalDisk getPhysicalDisk(String volumeUuid, KVMStoragePool pool) {
+    public BhyvePhysicalDisk getPhysicalDisk(String volumeUuid, BhyveStoragePool pool) {
         // now create the volume upon the given storage pool in kvm
         Connect conn;
         StoragePool virtPool = null;
@@ -196,7 +196,7 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
                 vol = virtPool.storageVolCreateXML(volDef.toString(), 0);
 
             }
-            KVMPhysicalDisk disk = new KVMPhysicalDisk(vol.getPath(), volumeUuid, pool);
+            BhyvePhysicalDisk disk = new BhyvePhysicalDisk(vol.getPath(), volumeUuid, pool);
             disk.setFormat(PhysicalDiskFormat.QCOW2);
             disk.setSize(vol.getInfo().allocation);
             disk.setVirtualSize(vol.getInfo().capacity);
@@ -241,7 +241,7 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
     /*
      * disconnect the disk by destroying the sp pointer
      */
-    public boolean disconnectPhysicalDisk(KVMStoragePool pool, String mountpoint) throws LibvirtException {
+    public boolean disconnectPhysicalDisk(BhyveStoragePool pool, String mountpoint) throws LibvirtException {
 
         LibvirtStoragePool libvirtPool = (LibvirtStoragePool) pool;
         StoragePool sp = libvirtPool.getPool();
@@ -252,7 +252,7 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean disconnectPhysicalDisk(String volumeUuid, KVMStoragePool pool) {
+    public boolean disconnectPhysicalDisk(String volumeUuid, BhyveStoragePool pool) {
         try {
             return disconnectPhysicalDisk(pool, volumeUuid);
         } catch (LibvirtException e) {
@@ -270,36 +270,36 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
         return false;
     }
 
-    public boolean deletePhysicalDisk(String volumeUuid, KVMStoragePool pool) {
+    public boolean deletePhysicalDisk(String volumeUuid, BhyveStoragePool pool) {
         throw new UnsupportedOperationException("Deleting a physical disk is not supported.");
     }
 
     @Override
-    public List<KVMPhysicalDisk> listPhysicalDisks(String storagePoolUuid, KVMStoragePool pool) {
+    public List<BhyvePhysicalDisk> listPhysicalDisks(String storagePoolUuid, BhyveStoragePool pool) {
         throw new UnsupportedOperationException("Listing disks is not supported for this configuration.");
     }
 
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template, String name, PhysicalDiskFormat format, long size, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template, String name, PhysicalDiskFormat format, long size, BhyveStoragePool destPool, int timeout) {
         throw new UnsupportedOperationException("Creating a disk from a template is not yet supported for this configuration.");
     }
 
     @Override
-    public KVMPhysicalDisk createTemplateFromDisk(KVMPhysicalDisk disk, String name, PhysicalDiskFormat format, long size, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createTemplateFromDisk(BhyvePhysicalDisk disk, String name, PhysicalDiskFormat format, long size, BhyveStoragePool destPool) {
         throw new UnsupportedOperationException("Creating a template from a disk is not yet supported for this configuration.");
     }
 
     @Override
-    public KVMPhysicalDisk copyPhysicalDisk(KVMPhysicalDisk disk, String name, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk copyPhysicalDisk(BhyvePhysicalDisk disk, String name, BhyveStoragePool destPool, int timeout) {
         throw new UnsupportedOperationException("Copying a disk is not supported in this configuration.");
     }
 
     @Override
-    public KVMPhysicalDisk createDiskFromSnapshot(KVMPhysicalDisk snapshot, String snapshotName, String name, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createDiskFromSnapshot(BhyvePhysicalDisk snapshot, String snapshotName, String name, BhyveStoragePool destPool) {
         throw new UnsupportedOperationException("Creating a disk from a snapshot is not supported in this configuration.");
     }
 
     @Override
-    public boolean refresh(KVMStoragePool pool) {
+    public boolean refresh(BhyveStoragePool pool) {
         return true;
     }
 
@@ -314,17 +314,17 @@ public class ManagedNfsStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String name, KVMStoragePool pool, PhysicalDiskFormat format, ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String name, BhyveStoragePool pool, PhysicalDiskFormat format, ProvisioningType provisioningType, long size) {
         return null;
     }
 
     @Override
-    public boolean deletePhysicalDisk(String uuid, KVMStoragePool pool, ImageFormat format) {
+    public boolean deletePhysicalDisk(String uuid, BhyveStoragePool pool, ImageFormat format) {
         return false;
     }
 
     @Override
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template, String name, PhysicalDiskFormat format, ProvisioningType provisioningType, long size, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template, String name, PhysicalDiskFormat format, ProvisioningType provisioningType, long size, BhyveStoragePool destPool, int timeout) {
         return null;
     }
 }

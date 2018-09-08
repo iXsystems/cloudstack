@@ -24,7 +24,7 @@ import org.apache.cloudstack.utils.qemu.QemuImg.PhysicalDiskFormat;
 
 import com.cloud.storage.Storage.StoragePoolType;
 
-public class IscsiAdmStoragePool implements KVMStoragePool {
+public class IscsiAdmStoragePool implements BhyveStoragePool {
     private String _uuid;
     private String _sourceHost;
     private int _sourcePort;
@@ -83,11 +83,11 @@ public class IscsiAdmStoragePool implements KVMStoragePool {
         return PhysicalDiskFormat.RAW;
     }
 
-    // called from LibvirtComputingResource.copyPhysicalDisk(KVMPhysicalDisk, String, KVMStoragePool) and
-    // from LibvirtComputingResource.createDiskFromTemplate(KVMPhysicalDisk, String, PhysicalDiskFormat, long, KVMStoragePool)
+    // called from LibvirtComputingResource.copyPhysicalDisk(BhyvePhysicalDisk, String, BhyveStoragePool) and
+    // from LibvirtComputingResource.createDiskFromTemplate(BhyvePhysicalDisk, String, PhysicalDiskFormat, long, BhyveStoragePool)
     // does not apply for iScsiAdmStoragePool
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String name, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
         throw new UnsupportedOperationException("Creating a physical disk is not supported.");
     }
 
@@ -95,7 +95,7 @@ public class IscsiAdmStoragePool implements KVMStoragePool {
     // from KVMStorageProcessor.createVolume(CreateObjectCommand)
     // does not apply for iScsiAdmStoragePool
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String name, Storage.ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String name, Storage.ProvisioningType provisioningType, long size) {
         throw new UnsupportedOperationException("Creating a physical disk is not supported.");
     }
 
@@ -105,7 +105,7 @@ public class IscsiAdmStoragePool implements KVMStoragePool {
     }
 
     @Override
-    public KVMPhysicalDisk getPhysicalDisk(String volumeUuid) {
+    public BhyvePhysicalDisk getPhysicalDisk(String volumeUuid) {
         return this._storageAdaptor.getPhysicalDisk(volumeUuid, this);
     }
 
@@ -121,7 +121,7 @@ public class IscsiAdmStoragePool implements KVMStoragePool {
 
     // does not apply for iScsiAdmStoragePool
     @Override
-    public List<KVMPhysicalDisk> listPhysicalDisks() {
+    public List<BhyvePhysicalDisk> listPhysicalDisks() {
         return this._storageAdaptor.listPhysicalDisks(_uuid, this);
     }
 

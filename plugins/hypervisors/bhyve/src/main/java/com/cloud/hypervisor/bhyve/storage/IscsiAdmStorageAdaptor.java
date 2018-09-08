@@ -40,10 +40,10 @@ import com.cloud.utils.script.Script;
 public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     private static final Logger s_logger = Logger.getLogger(IscsiAdmStorageAdaptor.class);
 
-    private static final Map<String, KVMStoragePool> MapStorageUuidToStoragePool = new HashMap<>();
+    private static final Map<String, BhyveStoragePool> MapStorageUuidToStoragePool = new HashMap<>();
 
     @Override
-    public KVMStoragePool createStoragePool(String uuid, String host, int port, String path, String userInfo, StoragePoolType storagePoolType) {
+    public BhyveStoragePool createStoragePool(String uuid, String host, int port, String path, String userInfo, StoragePoolType storagePoolType) {
         IscsiAdmStoragePool storagePool = new IscsiAdmStoragePool(uuid, host, port, storagePoolType, this);
 
         MapStorageUuidToStoragePool.put(uuid, storagePool);
@@ -52,12 +52,12 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMStoragePool getStoragePool(String uuid) {
+    public BhyveStoragePool getStoragePool(String uuid) {
         return MapStorageUuidToStoragePool.get(uuid);
     }
 
     @Override
-    public KVMStoragePool getStoragePool(String uuid, boolean refreshInfo) {
+    public BhyveStoragePool getStoragePool(String uuid, boolean refreshInfo) {
         return MapStorageUuidToStoragePool.get(uuid);
     }
 
@@ -67,19 +67,19 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean deleteStoragePool(KVMStoragePool pool) {
+    public boolean deleteStoragePool(BhyveStoragePool pool) {
         return deleteStoragePool(pool.getUuid());
     }
 
     // called from LibvirtComputingResource.execute(CreateCommand)
     // does not apply for iScsiAdmStorageAdaptor
     @Override
-    public KVMPhysicalDisk createPhysicalDisk(String volumeUuid, KVMStoragePool pool, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
+    public BhyvePhysicalDisk createPhysicalDisk(String volumeUuid, BhyveStoragePool pool, PhysicalDiskFormat format, Storage.ProvisioningType provisioningType, long size) {
         throw new UnsupportedOperationException("Creating a physical disk is not supported.");
     }
 
     @Override
-    public boolean connectPhysicalDisk(String volumeUuid, KVMStoragePool pool, Map<String, String> details) {
+    public boolean connectPhysicalDisk(String volumeUuid, BhyveStoragePool pool, Map<String, String> details) {
         // ex. sudo iscsiadm -m node -T iqn.2012-03.com.test:volume1 -p 192.168.233.10:3260 -o new
         Script iScsiAdmCmd = new Script(true, "iscsiadm", 0, s_logger);
 
@@ -142,8 +142,8 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
         // returns success before the device has been added to the OS.
         // What happens is you get logged in and the device shows up, but the device may not
         // show up before we invoke Libvirt to attach the device to a VM.
-        // waitForDiskToBecomeAvailable(String, KVMStoragePool) invokes blockdev
-        // via getPhysicalDisk(String, KVMStoragePool) and checks if the size came back greater
+        // waitForDiskToBecomeAvailable(String, BhyveStoragePool) invokes blockdev
+        // via getPhysicalDisk(String, BhyveStoragePool) and checks if the size came back greater
         // than 0.
         // After a certain number of tries and a certain waiting period in between tries,
         // this method could still return (it should not block indefinitely) (the race condition
@@ -153,7 +153,7 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
         return true;
     }
 
-    private void waitForDiskToBecomeAvailable(String volumeUuid, KVMStoragePool pool) {
+    private void waitForDiskToBecomeAvailable(String volumeUuid, BhyveStoragePool pool) {
         int numberOfTries = 10;
         int timeBetweenTries = 1000;
 
@@ -185,7 +185,7 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
         }
     }
 
-    private void executeChapCommand(String path, KVMStoragePool pool, String nParameter, String vParameter, String detail) throws Exception {
+    private void executeChapCommand(String path, BhyveStoragePool pool, String nParameter, String vParameter, String detail) throws Exception {
         Script iScsiAdmCmd = new Script(true, "iscsiadm", 0, s_logger);
 
         iScsiAdmCmd.add("-m", "node");
@@ -218,9 +218,9 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk getPhysicalDisk(String volumeUuid, KVMStoragePool pool) {
+    public BhyvePhysicalDisk getPhysicalDisk(String volumeUuid, BhyveStoragePool pool) {
         String deviceByPath = getByPath(pool.getSourceHost(), pool.getSourcePort(), volumeUuid);
-        KVMPhysicalDisk physicalDisk = new KVMPhysicalDisk(deviceByPath, volumeUuid, pool);
+        BhyvePhysicalDisk physicalDisk = new BhyvePhysicalDisk(deviceByPath, volumeUuid, pool);
 
         physicalDisk.setFormat(PhysicalDiskFormat.RAW);
 
@@ -324,7 +324,7 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean disconnectPhysicalDisk(String volumeUuid, KVMStoragePool pool) {
+    public boolean disconnectPhysicalDisk(String volumeUuid, BhyveStoragePool pool) {
         return disconnectPhysicalDisk(pool.getSourceHost(), pool.getSourcePort(), getIqn(volumeUuid), getLun(volumeUuid));
     }
 
@@ -371,45 +371,45 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public boolean deletePhysicalDisk(String volumeUuid, KVMStoragePool pool, Storage.ImageFormat format) {
+    public boolean deletePhysicalDisk(String volumeUuid, BhyveStoragePool pool, Storage.ImageFormat format) {
         throw new UnsupportedOperationException("Deleting a physical disk is not supported.");
     }
 
     // does not apply for iScsiAdmStorageAdaptor
     @Override
-    public List<KVMPhysicalDisk> listPhysicalDisks(String storagePoolUuid, KVMStoragePool pool) {
+    public List<BhyvePhysicalDisk> listPhysicalDisks(String storagePoolUuid, BhyveStoragePool pool) {
         throw new UnsupportedOperationException("Listing disks is not supported for this configuration.");
     }
 
     @Override
-    public KVMPhysicalDisk createDiskFromTemplate(KVMPhysicalDisk template, String name, PhysicalDiskFormat format,
-            ProvisioningType provisioningType, long size,
-            KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk createDiskFromTemplate(BhyvePhysicalDisk template, String name, PhysicalDiskFormat format,
+                                                    ProvisioningType provisioningType, long size,
+                                                    BhyveStoragePool destPool, int timeout) {
         throw new UnsupportedOperationException("Creating a disk from a template is not yet supported for this configuration.");
     }
 
     @Override
-    public KVMPhysicalDisk createTemplateFromDisk(KVMPhysicalDisk disk, String name, PhysicalDiskFormat format, long size, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createTemplateFromDisk(BhyvePhysicalDisk disk, String name, PhysicalDiskFormat format, long size, BhyveStoragePool destPool) {
         throw new UnsupportedOperationException("Creating a template from a disk is not yet supported for this configuration.");
     }
 
     @Override
-    public KVMPhysicalDisk copyPhysicalDisk(KVMPhysicalDisk srcDisk, String destVolumeUuid, KVMStoragePool destPool, int timeout) {
+    public BhyvePhysicalDisk copyPhysicalDisk(BhyvePhysicalDisk srcDisk, String destVolumeUuid, BhyveStoragePool destPool, int timeout) {
         QemuImg q = new QemuImg(timeout);
 
         QemuImgFile srcFile;
 
-        KVMStoragePool srcPool = srcDisk.getPool();
+        BhyveStoragePool srcPool = srcDisk.getPool();
 
         if (srcPool.getType() == StoragePoolType.RBD) {
-            srcFile = new QemuImgFile(KVMPhysicalDisk.RBDStringBuilder(srcPool.getSourceHost(), srcPool.getSourcePort(),
+            srcFile = new QemuImgFile(BhyvePhysicalDisk.RBDStringBuilder(srcPool.getSourceHost(), srcPool.getSourcePort(),
                                                                        srcPool.getAuthUserName(), srcPool.getAuthSecret(),
                                                                        srcDisk.getPath()),srcDisk.getFormat());
         } else {
             srcFile = new QemuImgFile(srcDisk.getPath(), srcDisk.getFormat());
         }
 
-        KVMPhysicalDisk destDisk = destPool.getPhysicalDisk(destVolumeUuid);
+        BhyvePhysicalDisk destDisk = destPool.getPhysicalDisk(destVolumeUuid);
 
         QemuImgFile destFile = new QemuImgFile(destDisk.getPath(), destDisk.getFormat());
 
@@ -428,12 +428,12 @@ public class IscsiAdmStorageAdaptor implements StorageAdaptor {
     }
 
     @Override
-    public KVMPhysicalDisk createDiskFromSnapshot(KVMPhysicalDisk snapshot, String snapshotName, String name, KVMStoragePool destPool) {
+    public BhyvePhysicalDisk createDiskFromSnapshot(BhyvePhysicalDisk snapshot, String snapshotName, String name, BhyveStoragePool destPool) {
         throw new UnsupportedOperationException("Creating a disk from a snapshot is not supported in this configuration.");
     }
 
     @Override
-    public boolean refresh(KVMStoragePool pool) {
+    public boolean refresh(BhyveStoragePool pool) {
         return true;
     }
 
