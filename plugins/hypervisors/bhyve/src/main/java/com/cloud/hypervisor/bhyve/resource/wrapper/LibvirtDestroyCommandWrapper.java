@@ -26,7 +26,7 @@ import com.cloud.agent.api.storage.DestroyCommand;
 import com.cloud.agent.api.to.VolumeTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -40,7 +40,7 @@ public final class LibvirtDestroyCommandWrapper extends CommandWrapper<DestroyCo
     public Answer execute(final DestroyCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final VolumeTO vol = command.getVolume();
         try {
-            final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+            final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             final BhyveStoragePool pool = storagePoolMgr.getStoragePool(vol.getPoolType(), vol.getPoolUuid());
             pool.deletePhysicalDisk(vol.getPath(), null);
             return new Answer(command, true, "Success");

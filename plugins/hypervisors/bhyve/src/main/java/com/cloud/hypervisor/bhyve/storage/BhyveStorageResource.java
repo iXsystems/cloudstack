@@ -31,10 +31,10 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.Command;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 
-public class KVMStorageResource {
+public class BhyveStorageResource {
     private LibvirtComputingResource resource;
 
-    public KVMStorageResource(LibvirtComputingResource resource) {
+    public BhyveStorageResource(LibvirtComputingResource resource) {
         this.resource = resource;
     }
 

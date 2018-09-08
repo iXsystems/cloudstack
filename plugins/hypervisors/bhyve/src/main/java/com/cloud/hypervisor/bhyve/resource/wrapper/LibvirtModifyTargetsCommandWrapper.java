@@ -30,7 +30,7 @@ import com.cloud.agent.api.ModifyTargetsAnswer;
 import com.cloud.agent.api.ModifyTargetsCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.storage.Storage.StoragePoolType;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -42,7 +42,7 @@ public final class LibvirtModifyTargetsCommandWrapper extends CommandWrapper<Mod
 
     @Override
     public Answer execute(final ModifyTargetsCommand command, final LibvirtComputingResource libvirtComputingResource) {
-        KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
 
         List<Map<String, String>> targets = command.getTargets();
 

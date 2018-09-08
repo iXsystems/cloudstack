@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.HandleConfigDriveIsoCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage;
@@ -41,7 +41,7 @@ public final class LibvirtHandleConfigDriveCommandWrapper extends CommandWrapper
 
     @Override
     public Answer execute(final HandleConfigDriveIsoCommand command, final LibvirtComputingResource libvirtComputingResource) {
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         final BhyveStoragePool pool = storagePoolMgr.getStoragePool(Storage.StoragePoolType.NetworkFilesystem, command.getDestStore().getUuid());
         if (pool == null) {
             return new Answer(command, false, "Pool not found, config drive for KVM is only supported for NFS");

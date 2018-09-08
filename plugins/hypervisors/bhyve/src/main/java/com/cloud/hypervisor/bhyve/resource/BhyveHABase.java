@@ -28,8 +28,8 @@ import com.cloud.utils.script.OutputInterpreter;
 import com.cloud.utils.script.OutputInterpreter.AllLinesParser;
 import com.cloud.utils.script.Script;
 
-public class KVMHABase {
-    private static final Logger s_logger = Logger.getLogger(KVMHABase.class);
+public class BhyveHABase {
+    private static final Logger s_logger = Logger.getLogger(BhyveHABase.class);
     private long _timeout = 60000; /* 1 minutes */
     protected static String s_heartBeatPath;
     protected long _heartBeatUpdateTimeout = 60000;

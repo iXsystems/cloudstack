@@ -16,6 +16,6 @@
 // under the License.
 package com.cloud.hypervisor.bhyve.storage;
 
-public class KVMVirtualDisk {
+public class BhyveVirtualDisk {
 
 }

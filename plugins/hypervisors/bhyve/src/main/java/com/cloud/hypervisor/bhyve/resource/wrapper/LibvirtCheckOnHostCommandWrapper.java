@@ -29,9 +29,9 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.CheckOnHostCommand;
 import com.cloud.agent.api.to.HostTO;
 import com.cloud.agent.api.to.NetworkTO;
-import com.cloud.hypervisor.bhyve.resource.KVMHABase.NfsStoragePool;
-import com.cloud.hypervisor.bhyve.resource.KVMHAChecker;
-import com.cloud.hypervisor.bhyve.resource.KVMHAMonitor;
+import com.cloud.hypervisor.bhyve.resource.BhyveHABase.NfsStoragePool;
+import com.cloud.hypervisor.bhyve.resource.BhyveHAChecker;
+import com.cloud.hypervisor.bhyve.resource.BhyveHAMonitor;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -42,12 +42,12 @@ public final class LibvirtCheckOnHostCommandWrapper extends CommandWrapper<Check
     @Override
     public Answer execute(final CheckOnHostCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final ExecutorService executors = Executors.newSingleThreadExecutor();
-        final KVMHAMonitor monitor = libvirtComputingResource.getMonitor();
+        final BhyveHAMonitor monitor = libvirtComputingResource.getMonitor();
 
         final List<NfsStoragePool> pools = monitor.getStoragePools();
         final HostTO host = command.getHost();
         final NetworkTO privateNetwork = host.getPrivateNetwork();
-        final KVMHAChecker ha = new KVMHAChecker(pools, privateNetwork.getIp());
+        final BhyveHAChecker ha = new BhyveHAChecker(pools, privateNetwork.getIp());
 
         final Future<Boolean> future = executors.submit(ha);
         try {

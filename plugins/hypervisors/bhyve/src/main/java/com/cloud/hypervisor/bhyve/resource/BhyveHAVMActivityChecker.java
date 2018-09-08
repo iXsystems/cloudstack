@@ -23,8 +23,8 @@ import org.joda.time.Duration;
 
 import java.util.concurrent.Callable;
 
-public class KVMHAVMActivityChecker extends KVMHABase implements Callable<Boolean> {
-    private static final Logger LOG = Logger.getLogger(KVMHAVMActivityChecker.class);
+public class BhyveHAVMActivityChecker extends BhyveHABase implements Callable<Boolean> {
+    private static final Logger LOG = Logger.getLogger(BhyveHAVMActivityChecker.class);
 
     final private NfsStoragePool nfsStoragePool;
     final private String hostIP;
@@ -33,7 +33,7 @@ public class KVMHAVMActivityChecker extends KVMHABase implements Callable<Boolea
     final private Duration activityScriptTimeout = Duration.standardSeconds(3600L);
     final private long suspectTimeInSeconds;
 
-    public KVMHAVMActivityChecker(final NfsStoragePool pool, final String host, final String volumeUUIDListString, String vmActivityCheckPath, final long suspectTime) {
+    public BhyveHAVMActivityChecker(final NfsStoragePool pool, final String host, final String volumeUUIDListString, String vmActivityCheckPath, final long suspectTime) {
         this.nfsStoragePool = pool;
         this.hostIP = host;
         this.volumeUuidList = volumeUUIDListString;
@@ -53,9 +53,9 @@ public class KVMHAVMActivityChecker extends KVMHABase implements Callable<Boolea
         cmd.add("-d", String.valueOf(suspectTimeInSeconds));
         OutputInterpreter.OneLineParser parser = new OutputInterpreter.OneLineParser();
         String result = cmd.execute(parser);
-        LOG.debug("KVMHAVMActivityChecker pool: " + nfsStoragePool._poolIp);
-        LOG.debug("KVMHAVMActivityChecker result: " + result);
-        LOG.debug("KVMHAVMActivityChecker parser: " + parser.getLine());
+        LOG.debug("BhyveHAVMActivityChecker pool: " + nfsStoragePool._poolIp);
+        LOG.debug("BhyveHAVMActivityChecker result: " + result);
+        LOG.debug("BhyveHAVMActivityChecker parser: " + parser.getLine());
         if (result == null && parser.getLine().contains("DEAD")) {
             return false;
         } else {

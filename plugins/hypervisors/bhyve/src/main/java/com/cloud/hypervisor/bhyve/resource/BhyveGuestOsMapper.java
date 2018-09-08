@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-public class KVMGuestOsMapper {
-    private static final Logger s_logger = Logger.getLogger(KVMGuestOsMapper.class);
+public class BhyveGuestOsMapper {
+    private static final Logger s_logger = Logger.getLogger(BhyveGuestOsMapper.class);
     private static Map<String, String> s_mapper = new HashMap<String, String>();
     static {
         s_mapper.put("CentOS 4.5 (32-bit)", "CentOS 4.5");

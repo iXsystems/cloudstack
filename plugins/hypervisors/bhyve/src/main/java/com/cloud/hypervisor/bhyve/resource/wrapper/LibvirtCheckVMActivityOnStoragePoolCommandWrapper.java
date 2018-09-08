@@ -22,9 +22,9 @@ package com.cloud.hypervisor.bhyve.resource.wrapper;
 import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.CheckVMActivityOnStoragePoolCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
-import com.cloud.hypervisor.bhyve.resource.KVMHABase.NfsStoragePool;
-import com.cloud.hypervisor.bhyve.resource.KVMHAMonitor;
-import com.cloud.hypervisor.bhyve.resource.KVMHAVMActivityChecker;
+import com.cloud.hypervisor.bhyve.resource.BhyveHABase.NfsStoragePool;
+import com.cloud.hypervisor.bhyve.resource.BhyveHAMonitor;
+import com.cloud.hypervisor.bhyve.resource.BhyveHAVMActivityChecker;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -41,11 +41,11 @@ public final class LibvirtCheckVMActivityOnStoragePoolCommandWrapper extends Com
     @Override
     public Answer execute(final CheckVMActivityOnStoragePoolCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final ExecutorService executors = Executors.newSingleThreadExecutor();
-        final KVMHAMonitor monitor = libvirtComputingResource.getMonitor();
+        final BhyveHAMonitor monitor = libvirtComputingResource.getMonitor();
         final StorageFilerTO pool = command.getPool();
         if (Storage.StoragePoolType.NetworkFilesystem == pool.getType()){
             final NfsStoragePool nfspool = monitor.getStoragePool(pool.getUuid());
-            final KVMHAVMActivityChecker ha = new KVMHAVMActivityChecker(nfspool, command.getHost().getPrivateNetwork().getIp(), command.getVolumeList(), libvirtComputingResource.getVmActivityCheckPath(), command.getSuspectTimeInSeconds());
+            final BhyveHAVMActivityChecker ha = new BhyveHAVMActivityChecker(nfspool, command.getHost().getPrivateNetwork().getIp(), command.getVolumeList(), libvirtComputingResource.getVmActivityCheckPath(), command.getSuspectTimeInSeconds());
             final Future<Boolean> future = executors.submit(ha);
             try {
                 final Boolean result = future.get();

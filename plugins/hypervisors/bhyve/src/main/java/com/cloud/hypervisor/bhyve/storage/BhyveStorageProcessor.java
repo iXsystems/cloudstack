@@ -118,16 +118,16 @@ import com.cloud.utils.storage.S3.S3Utils;
 import com.cloud.utils.exception.CloudRuntimeException;
 import com.cloud.utils.script.Script;
 
-public class KVMStorageProcessor implements StorageProcessor {
-    private static final Logger s_logger = Logger.getLogger(KVMStorageProcessor.class);
-    private final KVMStoragePoolManager storagePoolMgr;
+public class BhyveStorageProcessor implements StorageProcessor {
+    private static final Logger s_logger = Logger.getLogger(BhyveStorageProcessor.class);
+    private final BhyveStoragePoolManager storagePoolMgr;
     private final LibvirtComputingResource resource;
     private StorageLayer storageLayer;
     private String _createTmplPath;
     private String _manageSnapshotPath;
     private int _cmdsTimeout;
 
-    public KVMStorageProcessor(final KVMStoragePoolManager storagePoolMgr, final LibvirtComputingResource resource) {
+    public BhyveStorageProcessor(final BhyveStoragePoolManager storagePoolMgr, final LibvirtComputingResource resource) {
         this.storagePoolMgr = storagePoolMgr;
         this.resource = resource;
     }
@@ -162,14 +162,14 @@ public class KVMStorageProcessor implements StorageProcessor {
 
     @Override
     public SnapshotAndCopyAnswer snapshotAndCopy(final SnapshotAndCopyCommand cmd) {
-        s_logger.info("'SnapshotAndCopyAnswer snapshotAndCopy(SnapshotAndCopyCommand)' not currently used for KVMStorageProcessor");
+        s_logger.info("'SnapshotAndCopyAnswer snapshotAndCopy(SnapshotAndCopyCommand)' not currently used for BhyveStorageProcessor");
 
         return new SnapshotAndCopyAnswer();
     }
 
     @Override
     public ResignatureAnswer resignature(final ResignatureCommand cmd) {
-        s_logger.info("'ResignatureAnswer resignature(ResignatureCommand)' not currently used for KVMStorageProcessor");
+        s_logger.info("'ResignatureAnswer resignature(ResignatureCommand)' not currently used for BhyveStorageProcessor");
 
         return new ResignatureAnswer();
     }

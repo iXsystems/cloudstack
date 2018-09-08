@@ -26,7 +26,7 @@ import com.cloud.agent.api.to.DiskTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 
@@ -43,7 +43,7 @@ public final class LibvirtMigrateVolumeCommandWrapper extends CommandWrapper<Mig
 
     @Override
     public Answer execute(final MigrateVolumeCommand command, final LibvirtComputingResource libvirtComputingResource) {
-        KVMStoragePoolManager storagePoolManager = libvirtComputingResource.getStoragePoolMgr();
+        BhyveStoragePoolManager storagePoolManager = libvirtComputingResource.getStoragePoolMgr();
 
         VolumeObjectTO srcVolumeObjectTO = (VolumeObjectTO)command.getSrcData();
         PrimaryDataStoreTO srcPrimaryDataStore = (PrimaryDataStoreTO)srcVolumeObjectTO.getDataStore();

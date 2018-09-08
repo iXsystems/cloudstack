@@ -44,7 +44,7 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.BackupSnapshotAnswer;
 import com.cloud.agent.api.BackupSnapshotCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage.StoragePoolType;
@@ -67,7 +67,7 @@ public final class LibvirtBackupSnapshotCommandWrapper extends CommandWrapper<Ba
         String snapshotRelPath = null;
         final String vmName = command.getVmName();
         BhyveStoragePool secondaryStoragePool = null;
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
 
         try {
             final LibvirtUtilitiesHelper libvirtUtilitiesHelper = libvirtComputingResource.getLibvirtUtilitiesHelper();

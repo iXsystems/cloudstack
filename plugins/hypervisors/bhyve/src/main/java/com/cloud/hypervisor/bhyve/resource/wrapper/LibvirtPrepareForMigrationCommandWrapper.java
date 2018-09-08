@@ -27,7 +27,7 @@ import com.cloud.agent.api.to.NicTO;
 import com.cloud.agent.api.to.VirtualMachineTO;
 import com.cloud.exception.InternalErrorException;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Volume;
@@ -58,7 +58,7 @@ public final class LibvirtPrepareForMigrationCommandWrapper extends CommandWrapp
 
         boolean skipDisconnect = false;
 
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         try {
             final LibvirtUtilitiesHelper libvirtUtilitiesHelper = libvirtComputingResource.getLibvirtUtilitiesHelper();
 
@@ -96,7 +96,7 @@ public final class LibvirtPrepareForMigrationCommandWrapper extends CommandWrapp
     }
 
     private Answer handleRollback(PrepareForMigrationCommand command, LibvirtComputingResource libvirtComputingResource) {
-        KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         VirtualMachineTO vmTO = command.getVirtualMachine();
 
         if (!storagePoolMgr.disconnectPhysicalDisksViaVmSpec(vmTO)) {

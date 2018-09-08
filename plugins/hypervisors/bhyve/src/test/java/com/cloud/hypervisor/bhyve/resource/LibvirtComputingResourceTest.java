@@ -145,13 +145,13 @@ import com.cloud.agent.api.to.VirtualMachineTO;
 import com.cloud.agent.api.to.VolumeTO;
 import com.cloud.agent.resource.virtualnetwork.VirtualRoutingResource;
 import com.cloud.exception.InternalErrorException;
-import com.cloud.hypervisor.bhyve.resource.KVMHABase.NfsStoragePool;
+import com.cloud.hypervisor.bhyve.resource.BhyveHABase.NfsStoragePool;
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.ChannelDef;
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.DiskDef;
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.InterfaceDef;
 import com.cloud.hypervisor.bhyve.resource.wrapper.LibvirtRequestWrapper;
 import com.cloud.hypervisor.bhyve.resource.wrapper.LibvirtUtilitiesHelper;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.network.Networks.TrafficType;
 import com.cloud.network.PhysicalNetworkSetupInfo;
 import com.cloud.storage.Storage.ImageFormat;
@@ -1007,7 +1007,7 @@ public class LibvirtComputingResourceTest {
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
 
         final VirtualMachineTO vm = Mockito.mock(VirtualMachineTO.class);
-        final KVMStoragePoolManager storagePoolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final NicTO nicTO = Mockito.mock(NicTO.class);
         final DiskTO diskTO = Mockito.mock(DiskTO.class);
         final VifDriver vifDriver = Mockito.mock(VifDriver.class);
@@ -1055,7 +1055,7 @@ public class LibvirtComputingResourceTest {
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
 
         final VirtualMachineTO vm = Mockito.mock(VirtualMachineTO.class);
-        final KVMStoragePoolManager storagePoolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final NicTO nicTO = Mockito.mock(NicTO.class);
         final DiskTO diskTO = Mockito.mock(DiskTO.class);
         final VifDriver vifDriver = Mockito.mock(VifDriver.class);
@@ -1104,7 +1104,7 @@ public class LibvirtComputingResourceTest {
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
 
         final VirtualMachineTO vm = Mockito.mock(VirtualMachineTO.class);
-        final KVMStoragePoolManager storagePoolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final NicTO nicTO = Mockito.mock(NicTO.class);
         final VifDriver vifDriver = Mockito.mock(VifDriver.class);
 
@@ -1147,7 +1147,7 @@ public class LibvirtComputingResourceTest {
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
 
         final VirtualMachineTO vm = Mockito.mock(VirtualMachineTO.class);
-        final KVMStoragePoolManager storagePoolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final NicTO nicTO = Mockito.mock(NicTO.class);
         final DiskTO volume = Mockito.mock(DiskTO.class);
         final VifDriver vifDriver = Mockito.mock(VifDriver.class);
@@ -1203,7 +1203,7 @@ public class LibvirtComputingResourceTest {
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
 
         final VirtualMachineTO vm = Mockito.mock(VirtualMachineTO.class);
-        final KVMStoragePoolManager storagePoolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final NicTO nicTO = Mockito.mock(NicTO.class);
         final DiskTO volume = Mockito.mock(DiskTO.class);
 
@@ -1685,7 +1685,7 @@ public class LibvirtComputingResourceTest {
 
         final CreateCommand command = new CreateCommand(diskCharacteristics, pool, executeInSequence );
 
-        final KVMStoragePoolManager poolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager poolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk vol = Mockito.mock(BhyvePhysicalDisk.class);
 
@@ -1713,7 +1713,7 @@ public class LibvirtComputingResourceTest {
 
         final CreateCommand command = new CreateCommand(diskCharacteristics, templateUrl, pool, executeInSequence );
 
-        final KVMStoragePoolManager poolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager poolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk vol = Mockito.mock(BhyvePhysicalDisk.class);
 
@@ -1742,7 +1742,7 @@ public class LibvirtComputingResourceTest {
 
         final CreateCommand command = new CreateCommand(diskCharacteristics, templateUrl, pool, executeInSequence );
 
-        final KVMStoragePoolManager poolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager poolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk vol = Mockito.mock(BhyvePhysicalDisk.class);
         final BhyvePhysicalDisk baseVol = Mockito.mock(BhyvePhysicalDisk.class);
@@ -1772,7 +1772,7 @@ public class LibvirtComputingResourceTest {
 
         final DestroyCommand command = new DestroyCommand(pool, volume, vmName);
 
-        final KVMStoragePoolManager poolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager poolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
         final VolumeTO vol = command.getVolume();
@@ -1799,7 +1799,7 @@ public class LibvirtComputingResourceTest {
 
         final DestroyCommand command = new DestroyCommand(pool, volume, vmName);
 
-        final KVMStoragePoolManager poolManager = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager poolManager = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
         final VolumeTO vol = command.getVolume();
@@ -1832,7 +1832,7 @@ public class LibvirtComputingResourceTest {
         final int wait = 0;
         final PrimaryStorageDownloadCommand command = new PrimaryStorageDownloadCommand(name, url, format, accountId, pool, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk tmplVol = Mockito.mock(BhyvePhysicalDisk.class);
@@ -1872,7 +1872,7 @@ public class LibvirtComputingResourceTest {
         final int wait = 0;
         final PrimaryStorageDownloadCommand command = new PrimaryStorageDownloadCommand(name, url, format, accountId, pool, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk tmplVol = Mockito.mock(BhyvePhysicalDisk.class);
@@ -1910,7 +1910,7 @@ public class LibvirtComputingResourceTest {
         final int wait = 0;
         final PrimaryStorageDownloadCommand command = new PrimaryStorageDownloadCommand(name, url, format, accountId, pool, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk tmplVol = Mockito.mock(BhyvePhysicalDisk.class);
@@ -1947,7 +1947,7 @@ public class LibvirtComputingResourceTest {
         final int wait = 0;
         final PrimaryStorageDownloadCommand command = new PrimaryStorageDownloadCommand(name, url, format, accountId, pool, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk tmplVol = Mockito.mock(BhyvePhysicalDisk.class);
@@ -1977,7 +1977,7 @@ public class LibvirtComputingResourceTest {
         final DataStoreTO store = Mockito.mock(DataStoreTO.class);
         final GetStorageStatsCommand command = new GetStorageStatsCommand(store );
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
 
         when(libvirtComputingResource.getStoragePoolMgr()).thenReturn(storagePoolMgr);
@@ -2036,7 +2036,7 @@ public class LibvirtComputingResourceTest {
     @Test
     public void testDeleteStoragePoolCommand() {
         final StoragePool storagePool = Mockito.mock(StoragePool.class);
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
 
         final DeleteStoragePoolCommand command = new DeleteStoragePoolCommand(storagePool);
 
@@ -2058,7 +2058,7 @@ public class LibvirtComputingResourceTest {
     @Test
     public void testDeleteStoragePoolCommandException() {
         final StoragePool storagePool = Mockito.mock(StoragePool.class);
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
 
         final DeleteStoragePoolCommand command = new DeleteStoragePoolCommand(storagePool);
 
@@ -2306,7 +2306,7 @@ public class LibvirtComputingResourceTest {
         final StoragePool pool = Mockito.mock(StoragePool.class);;
         final ModifyStoragePoolCommand command = new ModifyStoragePoolCommand(true, pool);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool bhyveStoragePool = Mockito.mock(BhyveStoragePool.class);
 
 
@@ -2331,7 +2331,7 @@ public class LibvirtComputingResourceTest {
         final StoragePool pool = Mockito.mock(StoragePool.class);;
         final ModifyStoragePoolCommand command = new ModifyStoragePoolCommand(true, pool);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
 
         when(libvirtComputingResource.getStoragePoolMgr()).thenReturn(storagePoolMgr);
         when(storagePoolMgr.createStoragePool(command.getPool().getUuid(), command.getPool().getHost(), command.getPool().getPort(), command.getPool().getPath(), command.getPool()
@@ -2700,7 +2700,7 @@ public class LibvirtComputingResourceTest {
 
         final CheckOnHostCommand command = new CheckOnHostCommand(host);
 
-        final KVMHAMonitor monitor = Mockito.mock(KVMHAMonitor.class);
+        final BhyveHAMonitor monitor = Mockito.mock(BhyveHAMonitor.class);
 
         when(libvirtComputingResource.getMonitor()).thenReturn(monitor);
 
@@ -2820,7 +2820,7 @@ public class LibvirtComputingResourceTest {
 
         final CreateVolumeFromSnapshotCommand command = new CreateVolumeFromSnapshotCommand(pool, secondaryStoragePoolURL, dcId, accountId, volumeId, backedUpSnapshotUuid, backedUpSnapshotName, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk snapshot = Mockito.mock(BhyvePhysicalDisk.class);
         final BhyveStoragePool primaryPool = Mockito.mock(BhyveStoragePool.class);
@@ -2865,7 +2865,7 @@ public class LibvirtComputingResourceTest {
 
         final CreateVolumeFromSnapshotCommand command = new CreateVolumeFromSnapshotCommand(pool, secondaryStoragePoolURL, dcId, accountId, volumeId, backedUpSnapshotUuid, backedUpSnapshotName, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk snapshot = Mockito.mock(BhyvePhysicalDisk.class);
 
@@ -2899,7 +2899,7 @@ public class LibvirtComputingResourceTest {
 
         final FenceCommand command = new FenceCommand(vm, host);
 
-        final KVMHAMonitor monitor = Mockito.mock(KVMHAMonitor.class);
+        final BhyveHAMonitor monitor = Mockito.mock(BhyveHAMonitor.class);
 
         final NfsStoragePool storagePool = Mockito.mock(NfsStoragePool.class);
         final List<NfsStoragePool> pools = new ArrayList<NfsStoragePool>();
@@ -3575,7 +3575,7 @@ public class LibvirtComputingResourceTest {
 
         final CreatePrivateTemplateFromVolumeCommand command = new CreatePrivateTemplateFromVolumeCommand(pool, secondaryStorageUrl, templateId, accountId, userSpecifiedName, uniqueName, volumePath, vmName, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryStorage = Mockito.mock(BhyveStoragePool.class);
         //final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
@@ -3648,7 +3648,7 @@ public class LibvirtComputingResourceTest {
 
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool primaryPool = Mockito.mock(BhyveStoragePool.class);
         final Domain vm = Mockito.mock(Domain.class);
         final DomainInfo info = Mockito.mock(DomainInfo.class);
@@ -3765,7 +3765,7 @@ public class LibvirtComputingResourceTest {
         final String localPath = "/mnt/local";
         final String tmplName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool snapshotPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk snapshot = Mockito.mock(BhyvePhysicalDisk.class);
@@ -3839,7 +3839,7 @@ public class LibvirtComputingResourceTest {
         final String localPath = "/mnt/local";
         final String tmplName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool snapshotPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk snapshot = Mockito.mock(BhyvePhysicalDisk.class);
@@ -3913,7 +3913,7 @@ public class LibvirtComputingResourceTest {
         final String localPath = "/mnt/local";
         final String tmplName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool snapshotPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk snapshot = Mockito.mock(BhyvePhysicalDisk.class);
@@ -3986,7 +3986,7 @@ public class LibvirtComputingResourceTest {
         final String localPath = "/mnt/local";
         final String tmplName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool snapshotPool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk snapshot = Mockito.mock(BhyvePhysicalDisk.class);
@@ -4061,7 +4061,7 @@ public class LibvirtComputingResourceTest {
 
         final CreatePrivateTemplateFromSnapshotCommand command = new CreatePrivateTemplateFromSnapshotCommand(pool, secondaryStoragePoolURL, dcId, accountId, volumeId, backedUpSnapshotUuid, backedUpSnapshotName, origTemplateInstallPath, newTemplateId, templateName, wait);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondaryPool = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool snapshotPool = Mockito.mock(BhyveStoragePool.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
@@ -4107,7 +4107,7 @@ public class LibvirtComputingResourceTest {
         final String destVolumeName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
         final String volumeDestPath = "/volumes/" + command.getVolumeId() + File.separator;
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondary = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
@@ -4154,7 +4154,7 @@ public class LibvirtComputingResourceTest {
         final String destVolumeName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
         final String volumeDestPath = "/volumes/" + command.getVolumeId() + File.separator;
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondary = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
@@ -4198,7 +4198,7 @@ public class LibvirtComputingResourceTest {
         final String destVolumeName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
         final String volumeDestPath = "/volumes/" + command.getVolumeId() + File.separator;
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondary = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
@@ -4238,7 +4238,7 @@ public class LibvirtComputingResourceTest {
 
         final StorageFilerTO pool = command.getPool();
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
 
         when(libvirtComputingResource.getStoragePoolMgr()).thenReturn(storagePoolMgr);
         when(storagePoolMgr.getStoragePool(pool.getType(), pool.getUuid())).thenThrow(new CloudRuntimeException("error"));
@@ -4267,7 +4267,7 @@ public class LibvirtComputingResourceTest {
         final String destVolumeName = "ce97bbc1-34fe-4259-9202-74bbce2562ab";
         final String volumeDestPath = "/volumes/" + command.getVolumeId() + File.separator;
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool secondary = Mockito.mock(BhyveStoragePool.class);
         final BhyveStoragePool primary = Mockito.mock(BhyveStoragePool.class);
 
@@ -4450,7 +4450,7 @@ public class LibvirtComputingResourceTest {
 
         final ResizeVolumeCommand command = new ResizeVolumeCommand(path, pool, currentSize, newSize, shrinkOk, vmInstance);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool storagePool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk vol = Mockito.mock(BhyvePhysicalDisk.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
@@ -4521,7 +4521,7 @@ public class LibvirtComputingResourceTest {
 
         final ResizeVolumeCommand command = new ResizeVolumeCommand(path, pool, currentSize, newSize, shrinkOk, vmInstance);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool storagePool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk vol = Mockito.mock(BhyvePhysicalDisk.class);
 
@@ -4550,7 +4550,7 @@ public class LibvirtComputingResourceTest {
 
         final ResizeVolumeCommand command = new ResizeVolumeCommand(path, pool, currentSize, newSize, shrinkOk, vmInstance);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool storagePool = Mockito.mock(BhyveStoragePool.class);
         final BhyvePhysicalDisk vol = Mockito.mock(BhyvePhysicalDisk.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
@@ -4598,7 +4598,7 @@ public class LibvirtComputingResourceTest {
 
         final ResizeVolumeCommand command = new ResizeVolumeCommand(path, pool, currentSize, newSize, shrinkOk, vmInstance);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final BhyveStoragePool storagePool = Mockito.mock(BhyveStoragePool.class);
 
         when(libvirtComputingResource.getStoragePoolMgr()).thenReturn(storagePoolMgr);
@@ -4656,7 +4656,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);
@@ -4710,7 +4710,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);
 
@@ -4755,7 +4755,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);
@@ -4806,7 +4806,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);
@@ -4857,7 +4857,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);
@@ -4931,7 +4931,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);
@@ -5011,7 +5011,7 @@ public class LibvirtComputingResourceTest {
 
         final StartCommand command = new StartCommand(vmSpec, host, executeInSequence);
 
-        final KVMStoragePoolManager storagePoolMgr = Mockito.mock(KVMStoragePoolManager.class);
+        final BhyveStoragePoolManager storagePoolMgr = Mockito.mock(BhyveStoragePoolManager.class);
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = Mockito.mock(LibvirtUtilitiesHelper.class);
         final Connect conn = Mockito.mock(Connect.class);
         final LibvirtVMDef vmDef = Mockito.mock(LibvirtVMDef.class);

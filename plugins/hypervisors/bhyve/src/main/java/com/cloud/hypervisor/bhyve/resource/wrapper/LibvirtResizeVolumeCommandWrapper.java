@@ -32,7 +32,7 @@ import com.cloud.agent.api.storage.ResizeVolumeAnswer;
 import com.cloud.agent.api.storage.ResizeVolumeCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage.StoragePoolType;
@@ -64,7 +64,7 @@ public final class LibvirtResizeVolumeCommandWrapper extends CommandWrapper<Resi
         }
 
         try {
-            final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+            final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             BhyveStoragePool pool = storagePoolMgr.getStoragePool(spool.getType(), spool.getUuid());
 
             final BhyvePhysicalDisk vol = pool.getPhysicalDisk(volid);

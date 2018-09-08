@@ -29,7 +29,7 @@ import com.cloud.agent.api.storage.CreateCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.agent.api.to.VolumeTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage.StoragePoolType;
@@ -50,7 +50,7 @@ public final class LibvirtCreateCommandWrapper extends CommandWrapper<CreateComm
         BhyvePhysicalDisk vol = null;
         long disksize;
         try {
-            final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+            final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             primaryPool = storagePoolMgr.getStoragePool(pool.getType(), pool.getUuid());
             disksize = dskch.getSize();
 

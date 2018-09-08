@@ -24,7 +24,7 @@ import org.libvirt.Connect;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 
-public class MigrateKVMAsync implements Callable<Domain> {
+public class MigrateBhyveAsync implements Callable<Domain> {
 
     private final LibvirtComputingResource libvirtComputingResource;
 
@@ -36,8 +36,8 @@ public class MigrateKVMAsync implements Callable<Domain> {
     private boolean migrateStorage;
     private boolean autoConvergence;
 
-    public MigrateKVMAsync(final LibvirtComputingResource libvirtComputingResource, final Domain dm, final Connect dconn, final String dxml,
-                           final boolean migrateStorage, final boolean autoConvergence, final String vmName, final String destIp) {
+    public MigrateBhyveAsync(final LibvirtComputingResource libvirtComputingResource, final Domain dm, final Connect dconn, final String dxml,
+                             final boolean migrateStorage, final boolean autoConvergence, final String vmName, final String destIp) {
         this.libvirtComputingResource = libvirtComputingResource;
 
         this.dm = dm;

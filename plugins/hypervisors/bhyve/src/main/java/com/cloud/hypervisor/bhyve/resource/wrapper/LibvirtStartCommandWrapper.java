@@ -36,7 +36,7 @@ import com.cloud.agent.resource.virtualnetwork.VirtualRoutingResource;
 import com.cloud.exception.InternalErrorException;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.network.Networks.IsolationType;
 import com.cloud.network.Networks.TrafficType;
 import com.cloud.resource.CommandWrapper;
@@ -56,7 +56,7 @@ public final class LibvirtStartCommandWrapper extends CommandWrapper<StartComman
         LibvirtVMDef vm = null;
 
         DomainState  state = DomainState.VIR_DOMAIN_SHUTOFF;
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         final LibvirtUtilitiesHelper libvirtUtilitiesHelper = libvirtComputingResource.getLibvirtUtilitiesHelper();
         Connect conn = null;
         try {

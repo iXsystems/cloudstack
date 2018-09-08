@@ -25,14 +25,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.cloud.hypervisor.bhyve.resource.BhyveHAChecker;
 import org.apache.log4j.Logger;
 
 import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.FenceAnswer;
 import com.cloud.agent.api.FenceCommand;
-import com.cloud.hypervisor.bhyve.resource.KVMHABase.NfsStoragePool;
-import com.cloud.hypervisor.bhyve.resource.KVMHAChecker;
-import com.cloud.hypervisor.bhyve.resource.KVMHAMonitor;
+import com.cloud.hypervisor.bhyve.resource.BhyveHABase.NfsStoragePool;
+import com.cloud.hypervisor.bhyve.resource.BhyveHAMonitor;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -45,7 +45,7 @@ public final class LibvirtFenceCommandWrapper extends CommandWrapper<FenceComman
     @Override
     public Answer execute(final FenceCommand command, final LibvirtComputingResource libvirtComputingResource) {
         final ExecutorService executors = Executors.newSingleThreadExecutor();
-        final KVMHAMonitor monitor = libvirtComputingResource.getMonitor();
+        final BhyveHAMonitor monitor = libvirtComputingResource.getMonitor();
 
         final List<NfsStoragePool> pools = monitor.getStoragePools();
 
@@ -60,7 +60,7 @@ public final class LibvirtFenceCommandWrapper extends CommandWrapper<FenceComman
             return new FenceAnswer(command, false, logline);
         }
 
-        final KVMHAChecker ha = new KVMHAChecker(pools, command.getHostIp());
+        final BhyveHAChecker ha = new BhyveHAChecker(pools, command.getHostIp());
 
         final Future<Boolean> future = executors.submit(ha);
         try {

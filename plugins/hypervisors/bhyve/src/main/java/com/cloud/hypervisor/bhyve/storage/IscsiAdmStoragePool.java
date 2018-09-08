@@ -92,7 +92,7 @@ public class IscsiAdmStoragePool implements BhyveStoragePool {
     }
 
     // called from LibvirtComputingResource.execute(CreateCommand) and
-    // from KVMStorageProcessor.createVolume(CreateObjectCommand)
+    // from BhyveStorageProcessor.createVolume(CreateObjectCommand)
     // does not apply for iScsiAdmStoragePool
     @Override
     public BhyvePhysicalDisk createPhysicalDisk(String name, Storage.ProvisioningType provisioningType, long size) {

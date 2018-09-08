@@ -32,7 +32,7 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.DeleteVMSnapshotAnswer;
 import com.cloud.agent.api.DeleteVMSnapshotCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Volume;
@@ -48,7 +48,7 @@ public final class LibvirtDeleteVMSnapshotCommandWrapper extends CommandWrapper<
     public Answer execute(final DeleteVMSnapshotCommand cmd, final LibvirtComputingResource libvirtComputingResource) {
         String vmName = cmd.getVmName();
 
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         Domain dm = null;
         DomainSnapshot snapshot = null;
         try {

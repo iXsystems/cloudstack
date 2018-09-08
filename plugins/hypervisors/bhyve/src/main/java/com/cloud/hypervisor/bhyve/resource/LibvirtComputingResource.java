@@ -49,6 +49,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
+import com.cloud.hypervisor.bhyve.storage.BhyveStorageProcessor;
 import com.cloud.resource.RequestWrapper;
 import org.apache.cloudstack.storage.to.PrimaryDataStoreTO;
 import org.apache.cloudstack.storage.to.VolumeObjectTO;
@@ -140,8 +141,7 @@ import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.WatchDogDef.WatchDogActi
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.WatchDogDef.WatchDogModel;
 import com.cloud.hypervisor.bhyve.resource.wrapper.LibvirtRequestWrapper;
 import com.cloud.hypervisor.bhyve.resource.wrapper.LibvirtUtilitiesHelper;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
-import com.cloud.hypervisor.bhyve.storage.KVMStorageProcessor;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.network.Networks.BroadcastDomainType;
 import com.cloud.network.Networks.RouterPrivateIpStrategy;
 import com.cloud.network.Networks.TrafficType;
@@ -219,7 +219,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     private Duration _timeout;
     private static final int NUMMEMSTATS =2;
 
-    private KVMHAMonitor _monitor;
+    private BhyveHAMonitor _monitor;
     public static final String SSHKEYSPATH = "/root/.ssh";
     public static final String SSHPRVKEYPATH = SSHKEYSPATH + File.separator + "id_rsa.cloud";
     public static final String SSHPUBKEYPATH = SSHKEYSPATH + File.separator + "id_rsa.pub.cloud";
@@ -228,7 +228,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
     private String _mountPoint = "/mnt";
     private StorageLayer _storage;
-    private KVMStoragePoolManager _storagePoolMgr;
+    private BhyveStoragePoolManager _storagePoolMgr;
 
     private VifDriver _defaultVifDriver;
     private Map<TrafficType, VifDriver> _trafficTypeVifDrivers;
@@ -398,7 +398,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         return _publicBridgeName;
     }
 
-    public KVMStoragePoolManager getStoragePoolMgr() {
+    public BhyveStoragePoolManager getStoragePoolMgr() {
         return _storagePoolMgr;
     }
 
@@ -434,7 +434,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         return _ovsTunnelPath;
     }
 
-    public KVMHAMonitor getMonitor() {
+    public BhyveHAMonitor getMonitor() {
         return _monitor;
     }
 
@@ -953,11 +953,11 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
         final String[] info = NetUtils.getNetworkParams(_privateNic);
 
-        _monitor = new KVMHAMonitor(null, info[0], _heartBeatPath);
+        _monitor = new BhyveHAMonitor(null, info[0], _heartBeatPath);
         final Thread ha = new Thread(_monitor);
         ha.start();
 
-        _storagePoolMgr = new KVMStoragePoolManager(_storage, _monitor);
+        _storagePoolMgr = new BhyveStoragePoolManager(_storage, _monitor);
 
         _sysvmISOPath = (String)params.get("systemvm.iso.path");
         if (_sysvmISOPath == null) {
@@ -1054,7 +1054,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
         configureDiskActivityChecks(params);
 
-        final KVMStorageProcessor storageProcessor = new KVMStorageProcessor(_storagePoolMgr, this);
+        final BhyveStorageProcessor storageProcessor = new BhyveStorageProcessor(_storagePoolMgr, this);
         storageProcessor.configure(name, params);
         storageHandler = new StorageSubsystemCommandHandlerBase(storageProcessor);
 
@@ -2427,7 +2427,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         return _storagePoolMgr.disconnectPhysicalDiskByPath(path);
     }
 
-    protected KVMStoragePoolManager getPoolManager() {
+    protected BhyveStoragePoolManager getPoolManager() {
         return _storagePoolMgr;
     }
 

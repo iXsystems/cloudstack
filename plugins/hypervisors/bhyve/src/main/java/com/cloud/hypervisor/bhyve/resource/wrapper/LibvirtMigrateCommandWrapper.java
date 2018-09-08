@@ -64,7 +64,7 @@ import com.cloud.agent.api.MigrateCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.DiskDef;
 import com.cloud.hypervisor.bhyve.resource.LibvirtVMDef.InterfaceDef;
-import com.cloud.hypervisor.bhyve.resource.MigrateKVMAsync;
+import com.cloud.hypervisor.bhyve.resource.MigrateBhyveAsync;
 import com.cloud.hypervisor.bhyve.resource.VifDriver;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
@@ -153,7 +153,7 @@ public final class LibvirtMigrateCommandWrapper extends CommandWrapper<MigrateCo
             //run migration in thread so we can monitor it
             s_logger.info("Live migration of instance " + vmName + " initiated to destination host: " + dconn.getURI());
             final ExecutorService executor = Executors.newFixedThreadPool(1);
-            final Callable<Domain> worker = new MigrateKVMAsync(libvirtComputingResource, dm, dconn, xmlDesc, migrateStorage,
+            final Callable<Domain> worker = new MigrateBhyveAsync(libvirtComputingResource, dm, dconn, xmlDesc, migrateStorage,
                     command.isAutoConvergence(), vmName, command.getDestinationIp());
             final Future<Domain> migrateThread = executor.submit(worker);
             executor.shutdown();

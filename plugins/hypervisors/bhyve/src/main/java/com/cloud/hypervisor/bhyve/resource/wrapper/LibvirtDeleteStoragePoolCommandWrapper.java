@@ -23,7 +23,7 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.DeleteStoragePoolCommand;
 import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -36,7 +36,7 @@ public final class LibvirtDeleteStoragePoolCommandWrapper extends CommandWrapper
             // if getRemoveDatastore() is true, then we are dealing with managed storage and can skip the delete logic here
             if (!command.getRemoveDatastore()) {
                 final StorageFilerTO pool = command.getPool();
-                final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+                final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
 
                 storagePoolMgr.deleteStoragePool(pool.getType(), pool.getUuid());
             }

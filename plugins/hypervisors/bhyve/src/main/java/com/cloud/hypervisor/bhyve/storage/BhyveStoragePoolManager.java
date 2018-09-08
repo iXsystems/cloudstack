@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.cloud.hypervisor.bhyve.resource.BhyveHAMonitor;
 import org.apache.log4j.Logger;
 
 import org.apache.cloudstack.storage.to.PrimaryDataStoreTO;
@@ -34,9 +35,8 @@ import org.apache.cloudstack.utils.qemu.QemuImg.PhysicalDiskFormat;
 
 import com.cloud.agent.api.to.DiskTO;
 import com.cloud.agent.api.to.VirtualMachineTO;
-import com.cloud.hypervisor.bhyve.resource.KVMHABase;
-import com.cloud.hypervisor.bhyve.resource.KVMHABase.PoolType;
-import com.cloud.hypervisor.bhyve.resource.KVMHAMonitor;
+import com.cloud.hypervisor.bhyve.resource.BhyveHABase;
+import com.cloud.hypervisor.bhyve.resource.BhyveHABase.PoolType;
 import com.cloud.storage.Storage;
 import com.cloud.storage.Storage.StoragePoolType;
 import com.cloud.storage.StorageLayer;
@@ -45,8 +45,8 @@ import com.cloud.utils.exception.CloudRuntimeException;
 
 import org.reflections.Reflections;
 
-public class KVMStoragePoolManager {
-    private static final Logger s_logger = Logger.getLogger(KVMStoragePoolManager.class);
+public class BhyveStoragePoolManager {
+    private static final Logger s_logger = Logger.getLogger(BhyveStoragePoolManager.class);
 
     private class StoragePoolInformation {
         String name;
@@ -68,7 +68,7 @@ public class KVMStoragePoolManager {
         }
     }
 
-    private KVMHAMonitor _haMonitor;
+    private BhyveHAMonitor _haMonitor;
     private final Map<String, StoragePoolInformation> _storagePools = new ConcurrentHashMap<String, StoragePoolInformation>();
     private final Map<String, StorageAdaptor> _storageMapper = new HashMap<String, StorageAdaptor>();
 
@@ -93,7 +93,7 @@ public class KVMStoragePoolManager {
         }
     }
 
-    public KVMStoragePoolManager(StorageLayer storagelayer, KVMHAMonitor monitor) {
+    public BhyveStoragePoolManager(StorageLayer storagelayer, BhyveHAMonitor monitor) {
         this._haMonitor = monitor;
         this._storageMapper.put("libvirt", new LibvirtStorageAdaptor(storagelayer));
         // add other storage adaptors here
@@ -323,7 +323,7 @@ public class KVMStoragePoolManager {
 
         // LibvirtStorageAdaptor-specific statement
         if (type == StoragePoolType.NetworkFilesystem && primaryStorage) {
-            KVMHABase.NfsStoragePool nfspool = new KVMHABase.NfsStoragePool(pool.getUuid(), host, path, pool.getLocalPath(), PoolType.PrimaryStorage);
+            BhyveHABase.NfsStoragePool nfspool = new BhyveHABase.NfsStoragePool(pool.getUuid(), host, path, pool.getLocalPath(), PoolType.PrimaryStorage);
             _haMonitor.addStoragePool(nfspool);
         }
         StoragePoolInformation info = new StoragePoolInformation(name, host, port, path, userInfo, type, primaryStorage);

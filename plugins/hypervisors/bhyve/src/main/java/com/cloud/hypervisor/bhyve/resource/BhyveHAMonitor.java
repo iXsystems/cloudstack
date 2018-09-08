@@ -31,13 +31,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class KVMHAMonitor extends KVMHABase implements Runnable {
-    private static final Logger s_logger = Logger.getLogger(KVMHAMonitor.class);
+public class BhyveHAMonitor extends BhyveHABase implements Runnable {
+    private static final Logger s_logger = Logger.getLogger(BhyveHAMonitor.class);
     private final Map<String, NfsStoragePool> _storagePool = new ConcurrentHashMap<String, NfsStoragePool>();
 
     private final String _hostIP; /* private ip address */
 
-    public KVMHAMonitor(NfsStoragePool pool, String host, String scriptPath) {
+    public BhyveHAMonitor(NfsStoragePool pool, String host, String scriptPath) {
         if (pool != null) {
             _storagePool.put(pool._poolUUID, pool);
         }
@@ -46,7 +46,7 @@ public class KVMHAMonitor extends KVMHABase implements Runnable {
     }
 
     private static synchronized void configureHeartBeatPath(String scriptPath) {
-        KVMHABase.s_heartBeatPath = scriptPath;
+        BhyveHABase.s_heartBeatPath = scriptPath;
     }
 
     public void addStoragePool(NfsStoragePool pool) {

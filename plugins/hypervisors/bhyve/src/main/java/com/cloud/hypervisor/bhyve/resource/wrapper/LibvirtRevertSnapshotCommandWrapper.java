@@ -33,7 +33,7 @@ import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.to.DataStoreTO;
 import com.cloud.agent.api.to.NfsTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage.StoragePoolType;
@@ -63,7 +63,7 @@ public final class LibvirtRevertSnapshotCommandWrapper extends CommandWrapper<Re
         String snapshotRelPath = null;
         BhyveStoragePool secondaryStoragePool = null;
         try {
-            final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+            final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             secondaryStoragePool = storagePoolMgr.getStoragePoolByURI(secondaryStoragePoolUrl);
             String ssPmountPath = secondaryStoragePool.getLocalPath();
             snapshotRelPath = snapshot.getPath();

@@ -30,7 +30,7 @@ import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -60,7 +60,7 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
             return handleCopyDataFromVolumeToSecondaryStorageUsingSrcDetails(command, libvirtComputingResource);
         }
 
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
 
         final boolean copyToSecondary = command.toSecondaryStorage();
         final StorageFilerTO pool = command.getPool();
@@ -117,7 +117,7 @@ public final class LibvirtCopyVolumeCommandWrapper extends CommandWrapper<CopyVo
     }
 
     private Answer handleCopyDataFromVolumeToSecondaryStorageUsingSrcDetails(CopyVolumeCommand command, LibvirtComputingResource libvirtComputingResource) {
-        KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         PrimaryDataStoreTO srcPrimaryDataStore = null;
         BhyveStoragePool secondaryStoragePool = null;
 

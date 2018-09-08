@@ -28,7 +28,7 @@ import com.cloud.agent.api.to.StorageFilerTO;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -44,7 +44,7 @@ public final class LibvirtCreateVolumeFromSnapshotCommandWrapper extends Command
             final int index = snapshotPath.lastIndexOf("/");
             snapshotPath = snapshotPath.substring(0, index);
 
-            final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+            final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             final BhyveStoragePool secondaryPool = storagePoolMgr.getStoragePoolByURI(command.getSecondaryStorageUrl() + snapshotPath);
             final BhyvePhysicalDisk snapshot = secondaryPool.getPhysicalDisk(command.getSnapshotName());
 

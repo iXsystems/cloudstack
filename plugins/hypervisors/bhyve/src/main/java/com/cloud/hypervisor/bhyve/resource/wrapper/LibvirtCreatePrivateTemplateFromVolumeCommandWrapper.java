@@ -43,7 +43,7 @@ import com.cloud.agent.api.CreatePrivateTemplateFromVolumeCommand;
 import com.cloud.agent.api.storage.CreatePrivateTemplateAnswer;
 import com.cloud.exception.InternalErrorException;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.storage.Storage.ImageFormat;
@@ -67,7 +67,7 @@ public final class LibvirtCreatePrivateTemplateFromVolumeCommandWrapper extends 
 
         BhyveStoragePool secondaryStorage = null;
         BhyveStoragePool primary = null;
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         try {
             final String templateFolder = command.getAccountId() + File.separator + command.getTemplateId() + File.separator;
             final String templateInstallFolder = "/template/tmpl/" + templateFolder;

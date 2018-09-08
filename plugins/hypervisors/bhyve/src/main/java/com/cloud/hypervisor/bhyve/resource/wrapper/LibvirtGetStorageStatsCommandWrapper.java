@@ -24,7 +24,7 @@ import com.cloud.agent.api.GetStorageStatsAnswer;
 import com.cloud.agent.api.GetStorageStatsCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -35,7 +35,7 @@ public final class LibvirtGetStorageStatsCommandWrapper extends CommandWrapper<G
     @Override
     public Answer execute(final GetStorageStatsCommand command, final LibvirtComputingResource libvirtComputingResource) {
         try {
-            final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+            final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
             final BhyveStoragePool sp = storagePoolMgr.getStoragePool(command.getPooltype(), command.getStorageId(), true);
             return new GetStorageStatsAnswer(command, sp.getCapacity(), sp.getUsed());
         } catch (final CloudRuntimeException e) {

@@ -28,7 +28,7 @@ import com.cloud.agent.api.storage.PrimaryStorageDownloadCommand;
 import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.hypervisor.bhyve.storage.BhyveStoragePool;
 import com.cloud.hypervisor.bhyve.storage.BhyvePhysicalDisk;
-import com.cloud.hypervisor.bhyve.storage.KVMStoragePoolManager;
+import com.cloud.hypervisor.bhyve.storage.BhyveStoragePoolManager;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.exception.CloudRuntimeException;
@@ -49,7 +49,7 @@ public final class LibvirtPrimaryStorageDownloadCommandWrapper extends CommandWr
 
         BhyvePhysicalDisk tmplVol = null;
         BhyveStoragePool secondaryPool = null;
-        final KVMStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
+        final BhyveStoragePoolManager storagePoolMgr = libvirtComputingResource.getStoragePoolMgr();
         try {
             secondaryPool = storagePoolMgr.getStoragePoolByURI(mountpoint);
 

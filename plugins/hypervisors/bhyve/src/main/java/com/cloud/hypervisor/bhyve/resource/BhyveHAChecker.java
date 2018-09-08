@@ -25,13 +25,13 @@ import org.apache.log4j.Logger;
 import com.cloud.utils.script.OutputInterpreter;
 import com.cloud.utils.script.Script;
 
-public class KVMHAChecker extends KVMHABase implements Callable<Boolean> {
-    private static final Logger s_logger = Logger.getLogger(KVMHAChecker.class);
+public class BhyveHAChecker extends BhyveHABase implements Callable<Boolean> {
+    private static final Logger s_logger = Logger.getLogger(BhyveHAChecker.class);
     private List<NfsStoragePool> _pools;
     private String _hostIP;
     private long _heartBeatCheckerTimeout = 360000; /* 6 minutes */
 
-    public KVMHAChecker(List<NfsStoragePool> pools, String host) {
+    public BhyveHAChecker(List<NfsStoragePool> pools, String host) {
         this._pools = pools;
         this._hostIP = host;
     }
@@ -53,9 +53,9 @@ public class KVMHAChecker extends KVMHABase implements Callable<Boolean> {
             cmd.add("-t", String.valueOf(_heartBeatUpdateFreq / 1000));
             OutputInterpreter.OneLineParser parser = new OutputInterpreter.OneLineParser();
             String result = cmd.execute(parser);
-            s_logger.debug("KVMHAChecker pool: " + pool._poolIp);
-            s_logger.debug("KVMHAChecker result: " + result);
-            s_logger.debug("KVMHAChecker parser: " + parser.getLine());
+            s_logger.debug("BhyveHAChecker pool: " + pool._poolIp);
+            s_logger.debug("BhyveHAChecker result: " + result);
+            s_logger.debug("BhyveHAChecker parser: " + parser.getLine());
             if (result == null && parser.getLine().contains("> DEAD <")) {
                 s_logger.debug("read heartbeat failed: ");
                 results.add(false);

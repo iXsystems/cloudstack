@@ -28,10 +28,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
-public class KVMStorageProcessorTest {
+public class BhyveStorageProcessorTest {
 
     @Mock
-    KVMStoragePoolManager storagePoolManager;
+    BhyveStoragePoolManager storagePoolManager;
     @Mock
     LibvirtComputingResource resource;
 
@@ -40,12 +40,12 @@ public class KVMStorageProcessorTest {
 
     @Spy
     @InjectMocks
-    private KVMStorageProcessor storageProcessor;
+    private BhyveStorageProcessor storageProcessor;
 
     @Before
     public void setUp() throws ConfigurationException {
         MockitoAnnotations.initMocks(this);
-        storageProcessor = new KVMStorageProcessor(storagePoolManager, resource);
+        storageProcessor = new BhyveStorageProcessor(storagePoolManager, resource);
     }
 
     @Test
