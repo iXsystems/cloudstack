@@ -54,8 +54,8 @@ import com.cloud.resource.RequestWrapper;
 import org.apache.cloudstack.storage.to.PrimaryDataStoreTO;
 import org.apache.cloudstack.storage.to.VolumeObjectTO;
 import org.apache.cloudstack.utils.hypervisor.HypervisorUtils;
-import org.apache.cloudstack.utils.linux.CPUStat;
-import org.apache.cloudstack.utils.linux.MemStat;
+import org.apache.cloudstack.utils.freebsd.CPUStat;
+import org.apache.cloudstack.utils.freebsd.MemStat;
 import org.apache.cloudstack.utils.qemu.QemuImg.PhysicalDiskFormat;
 import org.apache.cloudstack.utils.security.KeyStoreUtils;
 import org.apache.commons.io.FileUtils;
@@ -224,7 +224,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
     public static final String SSHPRVKEYPATH = SSHKEYSPATH + File.separator + "id_rsa.cloud";
     public static final String SSHPUBKEYPATH = SSHKEYSPATH + File.separator + "id_rsa.pub.cloud";
 
-    public static final String BASH_SCRIPT_PATH = "/bin/bash";
+    public static final String BASH_SCRIPT_PATH = "/bin/sh";
 
     private String _mountPoint = "/mnt";
     private StorageLayer _storage;
@@ -909,11 +909,11 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             throw new CloudRuntimeException(e.getMessage());
         }
 
-        if (HypervisorType.KVM == _hypervisorType) {
+        if (HypervisorType.Bhyve == _hypervisorType) {
             /* Does node support HVM guest? If not, exit */
             if (!IsHVMEnabled(conn)) {
                 throw new ConfigurationException("NO HVM support on this machine, please make sure: " + "1. VT/SVM is supported by your CPU, or is enabled in BIOS. "
-                        + "2. kvm modules are loaded (kvm, kvm_amd|kvm_intel)");
+                        + "2. bhyve modules are loaded - or not running BSD");
             }
         }
 

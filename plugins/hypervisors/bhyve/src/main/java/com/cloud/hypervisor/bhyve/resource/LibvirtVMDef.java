@@ -41,7 +41,7 @@ public class LibvirtVMDef {
 
     public static class GuestDef {
         enum GuestType {
-            KVM, XEN, EXE, LXC
+            KVM, XEN, EXE, LXC, BHYVE
         }
 
         enum BootOrder {

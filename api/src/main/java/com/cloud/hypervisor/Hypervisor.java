@@ -33,6 +33,7 @@ public class Hypervisor {
         Ovm,
         Ovm3,
         LXC,
+        Bhyve,
 
         Any; /*If you don't care about the hypervisor type*/
 

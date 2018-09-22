@@ -17,6 +17,7 @@
 
 package org.apache.cloudstack.utils.freebsd;
 
+import com.cloud.utils.script.Script;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -28,7 +29,6 @@ public class CPUStat {
 
     private Integer _cores;
     private UptimeStats _lastStats;
-    private final String _sysfsCpuDir = "/sys/devices/system/cpu";
     private final String _uptimeFile = "/proc/uptime";
 
     class UptimeStats {
@@ -46,7 +46,7 @@ public class CPUStat {
     }
 
     private void init() {
-        _cores = getCoresFromLinux();
+        _cores = getCoresFromBSD();
         _lastStats = getUptimeAndCpuIdleTime();
     }
 
@@ -62,18 +62,11 @@ public class CPUStat {
         return uptime;
     }
 
-    private Integer getCoresFromLinux() {
-        Integer cpus = 0;
-        File cpuDir = new File(_sysfsCpuDir);
-        File[] files = cpuDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().matches("cpu\\d+")) {
-                    cpus++;
-                }
-            }
-        }
-        return cpus;
+    private Integer getCoresFromBSD() {
+        // sysctl -a | egrep -i 'hw.ncpu'
+        String output = Script.runSimpleShScript("sysctl -a | egrep -i 'hw.ncpu'");
+        String cpusStr = output.split(":")[1].trim();
+        return Integer.parseInt(cpusStr);
     }
 
     public Integer getCores() {
@@ -83,7 +76,7 @@ public class CPUStat {
     public Double getCpuUsedPercent() {
         Double cpuUsed = 0d;
         if (_cores == null || _cores == 0) {
-            _cores = getCoresFromLinux();
+            _cores = getCoresFromBSD();
         }
 
         UptimeStats currentStats = getUptimeAndCpuIdleTime();

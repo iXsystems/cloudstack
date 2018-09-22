@@ -16,6 +16,7 @@
 // under the License.
 package org.apache.cloudstack.utils.freebsd;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -49,13 +50,35 @@ public class MemStat {
         return _memStats.get(CACHE_KEY);
     }
 
+    /**
+     * Check in FreeBSD: man 5 linprocfs
+     * @return
+     */
+    private boolean mountLinProcFS(){
+        //mount -t linprocfs proc /proc
+        return false;
+    }
+
+
+    /**
+     * This method is to check if linprocfs is currectly mounted or not.
+     * @return
+     */
+    private boolean isLinProcFSMounted(){
+        return false;
+    }
+
+
     public void refresh() {
+
         File f = new File(MEMINFO_FILE);
         try (Scanner scanner = new Scanner(f,"UTF-8")) {
             parseFromScanner(scanner);
         } catch (FileNotFoundException ex) {
             throw new RuntimeException("File " + MEMINFO_FILE + " not found:" + ex.toString());
         }
+
+
     }
 
     protected void parseFromScanner(Scanner scanner) {

@@ -44,7 +44,7 @@ public class LibvirtUtilitiesHelperTest extends TestCase {
 
     public void testBashScriptPath() {
         LibvirtUtilitiesHelper helper = new LibvirtUtilitiesHelper();
-        assertEquals("/bin/bash", helper.retrieveBashScriptPath());
+        assertEquals("/bin/sh", helper.retrieveBashScriptPath());
     }
 
     public void testBuildScript() {

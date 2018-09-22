@@ -145,7 +145,7 @@ public class BridgeVifDriver extends VifDriverBase {
     private List<String> getBridgesFreeBSD(){
         // ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge
         final List<String> bridges = new ArrayList<String>();
-        String listOfInterfaces = Script.runSimpleShScript("ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep bridge", true);
+        String listOfInterfaces = Script.runSimpleShScript("ifconfig -a | sed -E 's/[[:space:]:].*//;/^$/d' | grep cloudbr", true);
         String [] bridgesTmp = listOfInterfaces.split("\n");
         for (int i = 0 ; i<bridgesTmp.length; i++){
             bridges.add(bridgesTmp[i]);
@@ -223,6 +223,30 @@ public class BridgeVifDriver extends VifDriverBase {
 
         return pif;
     }
+
+    private String matchPifFileInDirectoryFreeBSD(final String bridgeName) {
+
+        String output = Script.runSimpleBashScript("ifconfig");
+        String [] arrOut = output.split("\n");
+        boolean startedInterface = false;
+        String result = "";
+        for (int i = 0 ; i<arrOut.length; i++){
+            if (arrOut[i].startsWith(bridgeName)){
+                startedInterface = true;
+            }
+            if (startedInterface && arrOut[i].contains("member")){
+                String iName = arrOut[i].replace("member: ", "");
+                iName = iName.split(" ")[0];
+                if (iName.equals(bridgeName)){
+                    result = iName;
+                }
+            }
+
+        }
+
+        return result;
+    }
+
 
     private String matchPifFileInDirectory(final String bridgeName) {
         final File brif = new File("/sys/devices/virtual/net/" + bridgeName + "/brif");

@@ -27,8 +27,8 @@ import com.cloud.hypervisor.bhyve.resource.LibvirtComputingResource;
 import com.cloud.resource.CommandWrapper;
 import com.cloud.resource.ResourceWrapper;
 import com.cloud.utils.Pair;
-import org.apache.cloudstack.utils.linux.CPUStat;
-import org.apache.cloudstack.utils.linux.MemStat;
+import org.apache.cloudstack.utils.freebsd.CPUStat;
+import org.apache.cloudstack.utils.freebsd.MemStat;
 import org.apache.log4j.Logger;
 
 @ResourceWrapper(handles =  GetHostStatsCommand.class)
