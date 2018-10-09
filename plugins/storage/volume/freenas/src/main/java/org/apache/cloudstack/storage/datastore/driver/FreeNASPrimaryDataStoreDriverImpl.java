@@ -16,23 +16,46 @@
 // under the License.
 package org.apache.cloudstack.storage.datastore.driver;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import com.cloud.agent.api.to.DataObjectType;
+import com.cloud.dc.dao.ClusterDao;
+import com.cloud.host.dao.HostDao;
 
+
+import com.cloud.storage.dao.SnapshotDao;
+import com.cloud.storage.dao.SnapshotDetailsDao;
+import com.cloud.storage.dao.StoragePoolHostDao;
+import com.cloud.storage.dao.VolumeDetailsDao;
+import com.cloud.storage.dao.VolumeDao;
+
+import com.cloud.storage.dao.VMTemplatePoolDao;
+import com.cloud.user.AccountDetailsDao;
+import com.cloud.user.dao.AccountDao;
+
+import org.apache.cloudstack.engine.subsystem.api.storage.CreateCmdResult;
+import org.apache.cloudstack.engine.subsystem.api.storage.EndPoint;
 import org.apache.cloudstack.engine.subsystem.api.storage.ChapInfo;
 import org.apache.cloudstack.engine.subsystem.api.storage.CopyCommandResult;
-import org.apache.cloudstack.engine.subsystem.api.storage.CreateCmdResult;
-import org.apache.cloudstack.engine.subsystem.api.storage.DataObject;
-import org.apache.cloudstack.engine.subsystem.api.storage.DataStore;
-import org.apache.cloudstack.engine.subsystem.api.storage.EndPoint;
-import org.apache.cloudstack.engine.subsystem.api.storage.EndPointSelector;
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreDriver;
+import org.apache.cloudstack.engine.subsystem.api.storage.EndPointSelector;
+import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreManager;
+import org.apache.cloudstack.engine.subsystem.api.storage.VolumeDataFactory;
+import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreCapabilities;
+import org.apache.cloudstack.engine.subsystem.api.storage.DataObject;
+import org.apache.cloudstack.engine.subsystem.api.storage.VolumeInfo;
+
+import org.apache.cloudstack.engine.subsystem.api.storage.DataStore;
 import org.apache.cloudstack.engine.subsystem.api.storage.SnapshotInfo;
 import org.apache.cloudstack.engine.subsystem.api.storage.TemplateInfo;
-import org.apache.cloudstack.engine.subsystem.api.storage.VolumeInfo;
+
+import org.apache.cloudstack.storage.datastore.db.PrimaryDataStoreDao;
+import org.apache.cloudstack.storage.datastore.db.StoragePoolDetailsDao;
+import org.apache.log4j.Logger;
+
 import org.apache.cloudstack.framework.async.AsyncCallbackDispatcher;
 import org.apache.cloudstack.framework.async.AsyncCompletionCallback;
 import org.apache.cloudstack.framework.async.AsyncRpcContext;
@@ -40,13 +63,14 @@ import org.apache.cloudstack.storage.command.CommandResult;
 import org.apache.cloudstack.storage.command.CreateObjectCommand;
 import org.apache.cloudstack.storage.datastore.DataObjectManager;
 
+
 import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.to.DataStoreTO;
 import com.cloud.agent.api.to.DataTO;
 import com.cloud.host.Host;
 import com.cloud.storage.StoragePool;
-import com.cloud.storage.dao.StoragePoolHostDao;
 import com.cloud.utils.exception.CloudRuntimeException;
+
 
 public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver {
     private static final Logger s_logger = Logger.getLogger(FreeNASPrimaryDataStoreDriverImpl.class);
@@ -57,13 +81,34 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
     @Inject
     DataObjectManager dataObjMgr;
 
+    @Inject private AccountDao accountDao;
+    @Inject private AccountDetailsDao accountDetailsDao;
+    @Inject private ClusterDao clusterDao;
+    @Inject private DataStoreManager dataStoreMgr;
+    @Inject private HostDao hostDao;
+    @Inject private SnapshotDao snapshotDao;
+    @Inject private SnapshotDetailsDao snapshotDetailsDao;
+    @Inject private PrimaryDataStoreDao storagePoolDao;
+    @Inject private StoragePoolDetailsDao storagePoolDetailsDao;
+    @Inject private VMTemplatePoolDao tmpltPoolDao;
+    @Inject private VolumeDao volumeDao;
+    @Inject private VolumeDetailsDao volumeDetailsDao;
+    @Inject private VolumeDataFactory volumeFactory;
+
     public FreeNASPrimaryDataStoreDriverImpl() {
 
     }
 
     @Override
     public Map<String, String> getCapabilities() {
-        return null;
+        Map<String, String> mapCapabilities = new HashMap<>();
+
+        mapCapabilities.put(DataStoreCapabilities.STORAGE_SYSTEM_SNAPSHOT.toString(), Boolean.TRUE.toString());
+        mapCapabilities.put(DataStoreCapabilities.CAN_CREATE_VOLUME_FROM_SNAPSHOT.toString(), Boolean.TRUE.toString());
+        mapCapabilities.put(DataStoreCapabilities.CAN_CREATE_VOLUME_FROM_VOLUME.toString(), Boolean.TRUE.toString());
+        mapCapabilities.put(DataStoreCapabilities.CAN_REVERT_VOLUME_TO_SNAPSHOT.toString(), Boolean.TRUE.toString());
+
+        return mapCapabilities;
     }
 
     @Override
@@ -76,6 +121,9 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
         return null;
     }
 
+
+
+
     @Override
     public ChapInfo getChapInfo(DataObject dataObject) {
         return null;
@@ -87,6 +135,7 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
     @Override
     public void revokeAccess(DataObject dataObject, Host host, DataStore dataStore) {}
 
+
     @Override
     public long getUsedBytes(StoragePool storagePool) {
         return 0;
@@ -95,6 +144,21 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
     @Override
     public long getUsedIops(StoragePool storagePool) {
         return 0;
+    }
+
+    @Override
+    public void takeSnapshot(SnapshotInfo snapshot, AsyncCompletionCallback<CreateCmdResult> callback) {
+
+    }
+
+    @Override
+    public void revertSnapshot(SnapshotInfo snapshotOnImageStore, SnapshotInfo snapshotOnPrimaryStore, AsyncCompletionCallback<CommandResult> callback) {
+
+    }
+
+    @Override
+    public void handleQualityOfServiceForVolumeMigration(VolumeInfo volumeInfo, QualityOfServiceState qualityOfServiceState) {
+
     }
 
     @Override
@@ -138,6 +202,22 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
          * caller.setCallback(caller.getTarget().deleteCallback(null, null))
          * .setContext(context); ep.sendMessageAsync(cmd, caller);
          */
+    }
+
+    @Override
+    public void copyAsync(DataObject srcdata, DataObject destData,
+                          AsyncCompletionCallback<CopyCommandResult> callback) {
+
+    }
+
+    @Override
+    public boolean canCopy(DataObject srcData, DataObject destData) {
+        return false;
+    }
+
+    @Override
+    public void resize(DataObject data, AsyncCompletionCallback<CreateCmdResult> callback) {
+
     }
 
     public Void deleteCallback(AsyncCallbackDispatcher<FreeNASPrimaryDataStoreDriverImpl, Answer> callback, AsyncRpcContext<CommandResult> context) {
@@ -209,31 +289,46 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
         caller.setContext(context).setCallback(caller.getTarget().createAsyncCallback(null, null));
 
         ep.sendMessageAsync(createCmd, caller);
-    }
 
-    @Override
-    public void revertSnapshot(SnapshotInfo snapshot, SnapshotInfo snapshotOnPrimaryStore, AsyncCompletionCallback<CommandResult> callback) {
-    }
+        String iqn = null;
+        String errMsg = null;
+        DataObject dataObject = vol;
+        try {
+            if (dataObject.getType() == DataObjectType.VOLUME) {
 
-    @Override
-    public boolean canCopy(DataObject srcData, DataObject destData) {
-        return false;
-    }
+            } else if (dataObject.getType() == DataObjectType.SNAPSHOT) {
 
-    @Override
-    public void copyAsync(DataObject srcdata, DataObject destData, AsyncCompletionCallback<CopyCommandResult> callback) {
-    }
+            } else if (dataObject.getType() == DataObjectType.TEMPLATE) {
 
-    @Override
-    public void resize(DataObject data, AsyncCompletionCallback<CreateCmdResult> callback) {
-    }
+            } else {
+                errMsg = "Invalid DataObjectType (" + dataObject.getType() + ") passed to createAsync";
 
-    @Override
-    public void handleQualityOfServiceForVolumeMigration(VolumeInfo volumeInfo, QualityOfServiceState qualityOfServiceState) {
-    }
+            }
+        }
+        catch (Exception ex) {
+            errMsg = ex.getMessage();
 
-    @Override
-    public void takeSnapshot(SnapshotInfo snapshot, AsyncCompletionCallback<CreateCmdResult> callback) {
+            if (callback == null) {
+                throw ex;
+            }
+        }
+
+        if (callback != null) {
+            // path = iqn
+            // size is pulled from DataObject instance, if errMsg is null
+            CreateCmdResult result = new CreateCmdResult(iqn, new Answer(null, errMsg == null, errMsg));
+
+            result.setResult(errMsg);
+
+            callback.complete(result);
+        }
+        else {
+            if (errMsg != null) {
+                throw new CloudRuntimeException(errMsg);
+            }
+        }
+
+
     }
 
 }

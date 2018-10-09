@@ -1193,7 +1193,7 @@
                 <module>tools</module>
             </modules>
         </profile>
-        <profile>
+        <profile>:cloud-client-ui
             <id>impatient</id>
             <properties>
                 <marvin.config>tools/devcloud/devcloud.cfg</marvin.config>

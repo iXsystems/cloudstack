@@ -33,7 +33,7 @@ import org.apache.cloudstack.storage.datastore.lifecycle.FreeNASPrimaryDataStore
 import com.cloud.utils.component.ComponentContext;
 
 public class FreeNASPrimaryDatastoreProviderImpl implements PrimaryDataStoreProvider {
-    private final String providerName = "sample primary data store provider";
+    private final String providerName = "FreeNAS";
     protected PrimaryDataStoreDriver driver;
     protected HypervisorHostListener listener;
     @Inject

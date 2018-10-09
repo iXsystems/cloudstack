@@ -16,7 +16,6 @@
   specific language governing permissions and limitations
   under the License.
 -->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -28,9 +27,9 @@
                       http://www.springframework.org/schema/context/spring-context.xsd"
                       >
 
-    <bean id="freenasDataStoreProvider"
-        class="org.apache.cloudstack.storage.datastore.provider.FreeNASPrimaryDatastoreProviderImpl" />
-    <!--<bean id="solidFireSharedDataStoreProvider"
-        class="org.apache.cloudstack.storage.datastore.provider.SolidFireSharedPrimaryDataStoreProvider" />-->
+    <bean id="cloudStackPrimaryDataStoreProviderImpl"
+        class="org.apache.cloudstack.storage.datastore.provider.CloudStackPrimaryDataStoreProviderImpl" />
 
+
+    
 </beans>
