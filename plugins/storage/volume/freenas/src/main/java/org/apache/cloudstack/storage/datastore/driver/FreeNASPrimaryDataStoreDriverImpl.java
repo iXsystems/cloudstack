@@ -16,60 +16,56 @@
 // under the License.
 package org.apache.cloudstack.storage.datastore.driver;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.cloud.agent.api.Answer;
 import com.cloud.agent.api.to.DataObjectType;
+import com.cloud.agent.api.to.DataStoreTO;
+import com.cloud.agent.api.to.DataTO;
 import com.cloud.dc.dao.ClusterDao;
+import com.cloud.host.Host;
 import com.cloud.host.dao.HostDao;
-
-
+import com.cloud.storage.Storage;
+import com.cloud.storage.StoragePool;
+import com.cloud.storage.VolumeVO;
 import com.cloud.storage.dao.SnapshotDao;
 import com.cloud.storage.dao.SnapshotDetailsDao;
 import com.cloud.storage.dao.StoragePoolHostDao;
-import com.cloud.storage.dao.VolumeDetailsDao;
-import com.cloud.storage.dao.VolumeDao;
-
 import com.cloud.storage.dao.VMTemplatePoolDao;
+import com.cloud.storage.dao.VolumeDao;
+import com.cloud.storage.dao.VolumeDetailsDao;
 import com.cloud.user.AccountDetailsDao;
 import com.cloud.user.dao.AccountDao;
-
-import org.apache.cloudstack.engine.subsystem.api.storage.CreateCmdResult;
-import org.apache.cloudstack.engine.subsystem.api.storage.EndPoint;
+import com.cloud.utils.exception.CloudRuntimeException;
+import com.ixsystems.vcp.entities.Dataset;
 import org.apache.cloudstack.engine.subsystem.api.storage.ChapInfo;
 import org.apache.cloudstack.engine.subsystem.api.storage.CopyCommandResult;
-import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreDriver;
-import org.apache.cloudstack.engine.subsystem.api.storage.EndPointSelector;
-import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreManager;
-import org.apache.cloudstack.engine.subsystem.api.storage.VolumeDataFactory;
-import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreCapabilities;
+import org.apache.cloudstack.engine.subsystem.api.storage.CreateCmdResult;
 import org.apache.cloudstack.engine.subsystem.api.storage.DataObject;
-import org.apache.cloudstack.engine.subsystem.api.storage.VolumeInfo;
-
 import org.apache.cloudstack.engine.subsystem.api.storage.DataStore;
+import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreCapabilities;
+import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreManager;
+import org.apache.cloudstack.engine.subsystem.api.storage.EndPointSelector;
+import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreDriver;
 import org.apache.cloudstack.engine.subsystem.api.storage.SnapshotInfo;
 import org.apache.cloudstack.engine.subsystem.api.storage.TemplateInfo;
-
-import org.apache.cloudstack.storage.datastore.db.PrimaryDataStoreDao;
-import org.apache.cloudstack.storage.datastore.db.StoragePoolDetailsDao;
-import org.apache.log4j.Logger;
-
+import org.apache.cloudstack.engine.subsystem.api.storage.VolumeDataFactory;
+import org.apache.cloudstack.engine.subsystem.api.storage.VolumeInfo;
 import org.apache.cloudstack.framework.async.AsyncCallbackDispatcher;
 import org.apache.cloudstack.framework.async.AsyncCompletionCallback;
 import org.apache.cloudstack.framework.async.AsyncRpcContext;
 import org.apache.cloudstack.storage.command.CommandResult;
-import org.apache.cloudstack.storage.command.CreateObjectCommand;
 import org.apache.cloudstack.storage.datastore.DataObjectManager;
+import org.apache.cloudstack.storage.datastore.db.PrimaryDataStoreDao;
+import org.apache.cloudstack.storage.datastore.db.StoragePoolDetailsDao;
+import org.apache.cloudstack.storage.datastore.utils.AuxiliarAuth;
+import org.apache.log4j.Logger;
+import org.freenas.client.connectors.rest.imp.AuthenticationConnector;
+import org.freenas.client.connectors.rest.imp.EndpointConnector;
+import org.freenas.client.storage.rest.impl.DatasetRestConnector;
 
-
-import com.cloud.agent.api.Answer;
-import com.cloud.agent.api.to.DataStoreTO;
-import com.cloud.agent.api.to.DataTO;
-import com.cloud.host.Host;
-import com.cloud.storage.StoragePool;
-import com.cloud.utils.exception.CloudRuntimeException;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver {
@@ -81,19 +77,32 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
     @Inject
     DataObjectManager dataObjMgr;
 
-    @Inject private AccountDao accountDao;
-    @Inject private AccountDetailsDao accountDetailsDao;
-    @Inject private ClusterDao clusterDao;
-    @Inject private DataStoreManager dataStoreMgr;
-    @Inject private HostDao hostDao;
-    @Inject private SnapshotDao snapshotDao;
-    @Inject private SnapshotDetailsDao snapshotDetailsDao;
-    @Inject private PrimaryDataStoreDao storagePoolDao;
-    @Inject private StoragePoolDetailsDao storagePoolDetailsDao;
-    @Inject private VMTemplatePoolDao tmpltPoolDao;
-    @Inject private VolumeDao volumeDao;
-    @Inject private VolumeDetailsDao volumeDetailsDao;
-    @Inject private VolumeDataFactory volumeFactory;
+    @Inject
+    private AccountDao accountDao;
+    @Inject
+    private AccountDetailsDao accountDetailsDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private DataStoreManager dataStoreMgr;
+    @Inject
+    private HostDao hostDao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private SnapshotDetailsDao snapshotDetailsDao;
+    @Inject
+    private PrimaryDataStoreDao storagePoolDao;
+    @Inject
+    private StoragePoolDetailsDao storagePoolDetailsDao;
+    @Inject
+    private VMTemplatePoolDao tmpltPoolDao;
+    @Inject
+    private VolumeDao volumeDao;
+    @Inject
+    private VolumeDetailsDao volumeDetailsDao;
+    @Inject
+    private VolumeDataFactory volumeFactory;
 
     public FreeNASPrimaryDataStoreDriverImpl() {
 
@@ -122,18 +131,19 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
     }
 
 
-
-
     @Override
     public ChapInfo getChapInfo(DataObject dataObject) {
         return null;
     }
 
     @Override
-    public boolean grantAccess(DataObject dataObject, Host host, DataStore dataStore) { return false; }
+    public boolean grantAccess(DataObject dataObject, Host host, DataStore dataStore) {
+        return false;
+    }
 
     @Override
-    public void revokeAccess(DataObject dataObject, Host host, DataStore dataStore) {}
+    public void revokeAccess(DataObject dataObject, Host host, DataStore dataStore) {
+    }
 
 
     @Override
@@ -230,82 +240,35 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
         return null;
     }
 
-    /*
-     * private class CreateVolumeFromBaseImageContext<T> extends
-     * AsyncRpcContext<T> { private final VolumeObject volume;
-     *
-     * public CreateVolumeFromBaseImageContext(AsyncCompletionCallback<T>
-     * callback, VolumeObject volume) { super(callback); this.volume = volume; }
-     *
-     * public VolumeObject getVolume() { return this.volume; }
-     *
-     * }
-     *
-     * @Override public void createVolumeFromBaseImageAsync(VolumeObject volume,
-     * TemplateInfo template, AsyncCompletionCallback<CommandResult> callback) {
-     * VolumeTO vol = this.dataStore.getVolumeTO(volume); List<EndPoint>
-     * endPoints = this.dataStore.getEndPoints(); EndPoint ep =
-     * endPoints.get(0); String templateUri =
-     * template.getDataStore().grantAccess(template, ep);
-     * CreateVolumeFromBaseImageCommand cmd = new
-     * CreateVolumeFromBaseImageCommand(vol, templateUri);
-     *
-     * CreateVolumeFromBaseImageContext<CommandResult> context = new
-     * CreateVolumeFromBaseImageContext<CommandResult>(callback, volume);
-     * AsyncCallbackDispatcher<DefaultPrimaryDataStoreDriverImpl, Answer> caller
-     * = AsyncCallbackDispatcher.create(this); caller.setContext(context)
-     * .setCallback
-     * (caller.getTarget().createVolumeFromBaseImageAsyncCallback(null, null));
-     *
-     * ep.sendMessageAsync(cmd, caller); }
-     */
-    /*
-     * public Object
-     * createVolumeFromBaseImageAsyncCallback(AsyncCallbackDispatcher
-     * <DefaultPrimaryDataStoreDriverImpl, Answer> callback,
-     * CreateVolumeFromBaseImageContext<CommandResult> context) {
-     * CreateVolumeAnswer answer = (CreateVolumeAnswer)callback.getResult();
-     * CommandResult result = new CommandResult(); if (answer == null ||
-     * answer.getDetails() != null) { result.setSuccess(false); if (answer !=
-     * null) { result.setResult(answer.getDetails()); } } else {
-     * result.setSuccess(true); VolumeObject volume = context.getVolume();
-     * volume.setPath(answer.getVolumeUuid()); }
-     * AsyncCompletionCallback<CommandResult> parentCall =
-     * context.getParentCallback(); parentCall.complete(result); return null; }
-     */
 
+    /**
+     * This method allows to create any storage object;
+     * Several type of objects
+     *
+     * @param dataStore
+     * @param vol
+     * @param callback
+     */
     @Override
     public void createAsync(DataStore dataStore, DataObject vol, AsyncCompletionCallback<CreateCmdResult> callback) {
-        EndPoint ep = selector.select(vol);
-        if (ep == null) {
-            String errMsg = "No remote endpoint to send command, check if host or ssvm is down?";
-            s_logger.error(errMsg);
-            throw new CloudRuntimeException(errMsg);
-        }
-        CreateObjectCommand createCmd = new CreateObjectCommand(null);
-
-        CreateVolumeContext<CreateCmdResult> context = new CreateVolumeContext<CreateCmdResult>(callback, vol);
-        AsyncCallbackDispatcher<FreeNASPrimaryDataStoreDriverImpl, Answer> caller = AsyncCallbackDispatcher.create(this);
-        caller.setContext(context).setCallback(caller.getTarget().createAsyncCallback(null, null));
-
-        ep.sendMessageAsync(createCmd, caller);
 
         String iqn = null;
         String errMsg = null;
         DataObject dataObject = vol;
         try {
             if (dataObject.getType() == DataObjectType.VOLUME) {
-
+                iqn = createVolume((VolumeInfo) dataObject, dataStore.getId());
             } else if (dataObject.getType() == DataObjectType.SNAPSHOT) {
+                createTempVolume((SnapshotInfo) dataObject, dataStore.getId());
 
             } else if (dataObject.getType() == DataObjectType.TEMPLATE) {
+                iqn = createTemplateVolume((TemplateInfo) dataObject, dataStore.getId());
 
             } else {
                 errMsg = "Invalid DataObjectType (" + dataObject.getType() + ") passed to createAsync";
 
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             errMsg = ex.getMessage();
 
             if (callback == null) {
@@ -314,15 +277,11 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
         }
 
         if (callback != null) {
-            // path = iqn
-            // size is pulled from DataObject instance, if errMsg is null
+
             CreateCmdResult result = new CreateCmdResult(iqn, new Answer(null, errMsg == null, errMsg));
-
             result.setResult(errMsg);
-
             callback.complete(result);
-        }
-        else {
+        } else {
             if (errMsg != null) {
                 throw new CloudRuntimeException(errMsg);
             }
@@ -330,5 +289,70 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
 
 
     }
+
+
+    private DatasetRestConnector getConnector(){
+        AuthenticationConnector auth = AuxiliarAuth.getAuth();
+        EndpointConnector ep = new EndpointConnector("http://10.20.21.194", "http");
+        DatasetRestConnector gs = new DatasetRestConnector(ep, auth);
+
+        return gs;
+    }
+
+    /**
+     * Create Volume
+     *
+     * @param volumeInfo
+     * @param storagePoolId
+     * @return
+     */
+    private String createVolume(VolumeInfo volumeInfo, long storagePoolId) {
+
+        DatasetRestConnector gs = getConnector();
+        Map<String, String> args = new HashMap<String, String>();
+
+        args.put("name", "datasetNameTest"+ UUID.randomUUID().toString());
+
+        String volumeName = "zz";
+
+
+        Dataset ds  = gs.create(volumeName, args);
+
+
+        VolumeVO volume = volumeDao.findById(volumeInfo.getId());
+
+        volume.setPoolType(Storage.StoragePoolType.NetworkFilesystem);
+        volume.setPoolId(storagePoolId);
+
+
+        return "";
+    }
+
+    private String createIscsiVolume(String volumeName, Long volumeSize) {
+        return "";
+}
+
+
+    /**
+     * Create temporary volume - snapshot
+     * @param snapshotInfo
+     * @param storagePoolId
+     */
+    private void createTempVolume(SnapshotInfo snapshotInfo, long storagePoolId) {
+
+    }
+
+
+    /**
+     * Create Template Volume
+     *
+     * @param templateInfo
+     * @param storagePoolId
+     * @return
+     */
+    private String createTemplateVolume(TemplateInfo templateInfo, long storagePoolId) {
+        return "";
+    }
+
 
 }
