@@ -56,6 +56,7 @@ import org.apache.cloudstack.storage.command.CommandResult;
 import org.apache.cloudstack.storage.datastore.DataObjectManager;
 import org.apache.cloudstack.storage.datastore.db.PrimaryDataStoreDao;
 import org.apache.cloudstack.storage.datastore.db.StoragePoolDetailsDao;
+import org.apache.cloudstack.storage.datastore.db.StoragePoolVO;
 import org.apache.cloudstack.storage.datastore.utils.AuxiliarAuth;
 import org.apache.log4j.Logger;
 import org.freenas.client.connectors.rest.imp.AuthenticationConnector;
@@ -287,7 +288,6 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
             }
         }
 
-
     }
 
 
@@ -324,6 +324,22 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
         volume.setPoolType(Storage.StoragePoolType.NetworkFilesystem);
         volume.setPoolId(storagePoolId);
 
+
+        String iqn = zvol.getIqn();
+
+        VolumeVO volume = this._volumeDao.findById(volumeInfo.getId());
+        volume.set_iScsiName(iqn);
+        volume.setFolder(zvol.getName());
+        volume.setPoolType(Storage.StoragePoolType.IscsiLUN);
+        volume.setPoolId(storagePoolId);
+        _volumeDao.update(volume.getId(), volume);
+
+        StoragePoolVO storagePool = _storagePoolDao.findById(storagePoolId);
+        long capacityBytes = storagePool.getCapacityBytes();
+        long usedBytes = storagePool.getUsedBytes();
+        usedBytes += volumeInfo.getSize();
+        storagePool.setUsedBytes(usedBytes > capacityBytes ? capacityBytes : usedBytes);
+        _storagePoolDao.update(storagePoolId, storagePool);
 
         return "";
     }
