@@ -167,11 +167,6 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
     }
 
     @Override
-    public void handleQualityOfServiceForVolumeMigration(VolumeInfo volumeInfo, QualityOfServiceState qualityOfServiceState) {
-
-    }
-
-    @Override
     public long getDataObjectSizeIncludingHypervisorSnapshotReserve(DataObject dataObject, StoragePool pool) {
         return dataObject.getSize();
     }
