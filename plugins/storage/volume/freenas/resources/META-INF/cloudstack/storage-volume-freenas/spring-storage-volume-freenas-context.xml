@@ -28,8 +28,6 @@
                       >
 
     <bean id="cloudStackPrimaryDataStoreProviderImpl"
-        class="org.apache.cloudstack.storage.datastore.provider.CloudStackPrimaryDataStoreProviderImpl" />
+        class="org.apache.cloudstack.storage.datastore.provider.FreeNASPrimaryDatastoreProviderImpl" />
 
-
-    
 </beans>
