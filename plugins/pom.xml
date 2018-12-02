@@ -48,6 +48,7 @@
   <modules>
     <module>api/rate-limit</module>
     <module>api/solidfire-intg-test</module>
+    <module>api/ixsystems-api</module>
     <module>api/discovery</module>
     <module>acl/static-role-based</module>
     <module>acl/dynamic-role-based</module>
@@ -96,6 +97,7 @@
     <module>storage/image/swift</module>
     <module>storage/image/default</module>
     <module>storage/image/sample</module>
+    <module>storage/image/freenas</module>
     <module>storage/volume/nexenta</module>
     <module>storage/volume/solidfire</module>
     <module>storage/volume/freenas</module>

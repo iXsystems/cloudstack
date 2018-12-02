@@ -17,7 +17,6 @@
 package org.apache.cloudstack.storage.datastore.driver;
 
 import com.cloud.agent.api.Answer;
-import com.cloud.agent.api.to.DataObjectType;
 import com.cloud.agent.api.to.DataStoreTO;
 import com.cloud.agent.api.to.DataTO;
 import com.cloud.dc.dao.ClusterDao;
@@ -34,7 +33,6 @@ import com.cloud.storage.dao.VolumeDao;
 import com.cloud.storage.dao.VolumeDetailsDao;
 import com.cloud.user.AccountDetailsDao;
 import com.cloud.user.dao.AccountDao;
-import com.cloud.utils.exception.CloudRuntimeException;
 import com.ixsystems.vcp.entities.Dataset;
 import org.apache.cloudstack.engine.subsystem.api.storage.ChapInfo;
 import org.apache.cloudstack.engine.subsystem.api.storage.CopyCommandResult;
@@ -68,7 +66,10 @@ import java.util.Map;
 import java.util.UUID;
 
 
-public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver {
+/**
+ *
+ */
+public class FreeNASPrimaryDataStoreDriverImpl extends CloudStackPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver  {
     private static final Logger s_logger = Logger.getLogger(FreeNASPrimaryDataStoreDriverImpl.class);
     @Inject
     EndPointSelector selector;
@@ -122,48 +123,52 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
 
     @Override
     public DataTO getTO(DataObject data) {
-        return null;
+        return super.getTO(data);
     }
 
     @Override
     public DataStoreTO getStoreTO(DataStore store) {
-        return null;
+        return super.getStoreTO(store);
     }
 
 
     @Override
     public ChapInfo getChapInfo(DataObject dataObject) {
-        return null;
+        return super.getChapInfo(dataObject);
     }
 
     @Override
     public boolean grantAccess(DataObject dataObject, Host host, DataStore dataStore) {
-        return false;
+        return super.grantAccess(dataObject, host, dataStore);
     }
 
     @Override
     public void revokeAccess(DataObject dataObject, Host host, DataStore dataStore) {
+        super.revokeAccess(dataObject, host, dataStore);
     }
 
 
     @Override
     public long getUsedBytes(StoragePool storagePool) {
-        return 0;
+        return super.getUsedBytes(storagePool);
     }
 
     @Override
     public long getUsedIops(StoragePool storagePool) {
-        return 0;
+        return super.getUsedIops(storagePool);
     }
 
     @Override
-    public void takeSnapshot(SnapshotInfo snapshot, AsyncCompletionCallback<CreateCmdResult> callback) {
-
+    public void takeSnapshot(SnapshotInfo snapshot,
+                             AsyncCompletionCallback<CreateCmdResult> callback) {
+        super.takeSnapshot(snapshot, callback);
     }
 
     @Override
-    public void revertSnapshot(SnapshotInfo snapshotOnImageStore, SnapshotInfo snapshotOnPrimaryStore, AsyncCompletionCallback<CommandResult> callback) {
-
+    public void revertSnapshot(SnapshotInfo snapshotOnImageStore,
+                               SnapshotInfo snapshotOnPrimaryStore,
+                               AsyncCompletionCallback<CommandResult> callback) {
+        super.revertSnapshot(snapshotOnImageStore, snapshotOnPrimaryStore, callback);
     }
 
     @Override
@@ -207,22 +212,25 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
          * caller.setCallback(caller.getTarget().deleteCallback(null, null))
          * .setContext(context); ep.sendMessageAsync(cmd, caller);
          */
+        super.deleteAsync(dataStore, vo, callback);
     }
 
     @Override
     public void copyAsync(DataObject srcdata, DataObject destData,
                           AsyncCompletionCallback<CopyCommandResult> callback) {
 
+        super.copyAsync(srcdata, destData, callback);
+
     }
 
     @Override
     public boolean canCopy(DataObject srcData, DataObject destData) {
-        return false;
+        return super.canCopy(srcData, destData);
     }
 
     @Override
     public void resize(DataObject data, AsyncCompletionCallback<CreateCmdResult> callback) {
-
+        super.resize(data, callback);
     }
 
     public Void deleteCallback(AsyncCallbackDispatcher<FreeNASPrimaryDataStoreDriverImpl, Answer> callback, AsyncRpcContext<CommandResult> context) {
@@ -245,8 +253,10 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
      * @param callback
      */
     @Override
-    public void createAsync(DataStore dataStore, DataObject vol, AsyncCompletionCallback<CreateCmdResult> callback) {
-
+    public void createAsync(DataStore dataStore, DataObject vol,
+                            AsyncCompletionCallback<CreateCmdResult> callback) {
+        super.createAsync(dataStore, vol, callback);
+        /*
         String iqn = null;
         String errMsg = null;
         DataObject dataObject = vol;
@@ -281,6 +291,7 @@ public class FreeNASPrimaryDataStoreDriverImpl implements PrimaryDataStoreDriver
                 throw new CloudRuntimeException(errMsg);
             }
         }
+        */
 
 
     }

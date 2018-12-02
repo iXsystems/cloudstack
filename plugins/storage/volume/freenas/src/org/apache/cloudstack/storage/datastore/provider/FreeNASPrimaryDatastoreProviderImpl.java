@@ -16,12 +16,7 @@
 // under the License.
 package org.apache.cloudstack.storage.datastore.provider;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.cloud.utils.component.ComponentContext;
 import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreLifeCycle;
 import org.apache.cloudstack.engine.subsystem.api.storage.HypervisorHostListener;
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreDriver;
@@ -30,10 +25,13 @@ import org.apache.cloudstack.storage.datastore.PrimaryDataStoreProviderManager;
 import org.apache.cloudstack.storage.datastore.driver.FreeNASPrimaryDataStoreDriverImpl;
 import org.apache.cloudstack.storage.datastore.lifecycle.FreeNASPrimaryDataStoreLifeCycleImpl;
 
-import com.cloud.utils.component.ComponentContext;
+import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class FreeNASPrimaryDatastoreProviderImpl implements PrimaryDataStoreProvider {
-    private final String providerName = "FreeNAS";
+    private final String providerName = "iXsystemsPrimary";
     protected PrimaryDataStoreDriver driver;
     protected HypervisorHostListener listener;
     @Inject
