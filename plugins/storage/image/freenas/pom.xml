@@ -45,12 +45,7 @@
       <artifactId>cloud-engine-storage-snapshot</artifactId>
       <version>${project.version}</version>
     </dependency>
-      <dependency>
-          <groupId>org.apache.cloudstack</groupId>
-          <artifactId>cloud-plugin-storage-image-default</artifactId>
-          <version>4.11.2.0-SNAPSHOT</version>
-          <scope>compile</scope>
-      </dependency>
+     
     <dependency>
       <groupId>org.apache.cloudstack</groupId>
       <artifactId>cloud-plugin-storage-image-default</artifactId>
