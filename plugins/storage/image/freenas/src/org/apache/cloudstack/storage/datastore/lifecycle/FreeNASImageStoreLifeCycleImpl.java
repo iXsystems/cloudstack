@@ -52,6 +52,13 @@ public class FreeNASImageStoreLifeCycleImpl extends CloudStackImageStoreLifeCycl
     @Inject
     ImageStoreProviderManager imageStoreMgr;
 
+
+    private String username = "";
+    private String password = "";
+    private String endpoint = "";
+
+
+
     public FreeNASImageStoreLifeCycleImpl() {
     }
 
@@ -90,12 +97,46 @@ public class FreeNASImageStoreLifeCycleImpl extends CloudStackImageStoreLifeCycl
         return imageStoreMgr.getImageStore(ids.getId());
          **/
 
+
         String name = (String) dsInfos.get("name");
         String path = "/mnt/dev01/"+name;
 
-        //String url = (String) dsInfos.get("url");
-        createiXSystemDataset(name, "dev01");
+        String url = (String) dsInfos.get("url");
+
+        String [] aux1 = url.split("://");
+        String [] aux2 = aux1[1].split(("/"));
+
+        String protocol = aux1[0];
+        String server = aux2[0];
+        String volumeName = aux2[1];
+        String dataset = name;
+
+        String username = "root";
+        String password = "password";
+        String protocolFN = "http";
+        String portFN = "80";
+        this.endpoint = server; // how about the port?
+        if (url.contains("@")){
+
+            // this is for parse the username, password
+            url = url.split("@")[1];
+            username =  url.split("@")[0].split(":")[0];
+            password =  url.split("@")[0].split(":")[1];
+            this.username = username;
+            this.password = password;
+
+        }
+
+
+        createiXSystemDataset(name, volumeName);
         createiXSystemNFS(path,name);
+
+        //String name = (String) dsInfos.get("name");
+        //String path = "/mnt/dev01/"+name;
+
+        //String url = (String) dsInfos.get("url");
+        //createiXSystemDataset(name, "dev01");
+        //createiXSystemNFS(path,name);
 
 
         return super.initialize(dsInfos);

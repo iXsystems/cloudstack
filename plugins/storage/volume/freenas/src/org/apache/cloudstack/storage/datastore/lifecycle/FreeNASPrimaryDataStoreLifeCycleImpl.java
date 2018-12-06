@@ -72,6 +72,9 @@ public class FreeNASPrimaryDataStoreLifeCycleImpl extends CloudStackPrimaryDataS
     @Inject private CapacityManager _capacityMgr;
 
 
+    private String username = "";
+    private String password = "";
+    private String endpoint = "";
 
 
     @Inject
@@ -206,11 +209,17 @@ public class FreeNASPrimaryDataStoreLifeCycleImpl extends CloudStackPrimaryDataS
 
         String username = "root";
         String password = "password";
+        String protocolFN = "http";
+        String portFN = "80";
+        this.endpoint = server; // how about the port?
         if (url.contains("@")){
 
+            // this is for parse the username, password
             url = url.split("@")[1];
             username =  url.split("@")[0].split(":")[0];
             password =  url.split("@")[0].split(":")[1];
+            this.username = username;
+            this.password = password;
 
         }
 
@@ -227,7 +236,7 @@ public class FreeNASPrimaryDataStoreLifeCycleImpl extends CloudStackPrimaryDataS
 
 
     public AuthenticationConnector getAuth(){
-        AuthenticationConnector auth = new AuthenticationConnector("root", "");
+        AuthenticationConnector auth = new AuthenticationConnector(this.username, this.password);
         return auth;
     }
 
